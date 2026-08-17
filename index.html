@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookkaru · online ticketing</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f8f4f2;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ---------- SIDEBAR (left menu) · RED & WHITE ---------- */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            color: #2c1810;
+            padding: 1.5rem 1rem 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 16px rgba(180, 40, 20, 0.08);
+            position: fixed;
+            top: 0;
+            left: -280px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            border-right: 2px solid #e63946;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2rem;
+            color: #2c1810;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 0.8rem;
+        }
+
+        .sidebar .brand i {
+            color: #e63946;
+            font-size: 1.4rem;
+        }
+
+        .sidebar .menu-label {
+            display: none;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex: 1;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .sidebar nav a i {
+            display: inline-block;
+            width: 1.2rem;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        .sidebar nav a:hover {
+            background: #fce8e5;
+            color: #000000;
+            transform: translateX(4px);
+        }
+
+        .sidebar nav a.active {
+            background: #e63946;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
+        }
+
+        .sidebar nav a.active i {
+            color: #ffffff;
+        }
+
+        .sidebar .footer-menu {
+            margin-top: 2rem;
+            border-top: 1px solid #f0d6d0;
+            padding-top: 1rem;
+            font-size: 0.7rem;
+            color: #8a6b5c;
+        }
+
+        /* ----- Sidebar Auth Buttons (Mobile only) ----- */
+        .sidebar-auth {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #f0d6d0;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-auth .auth-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .sidebar-auth .auth-btn i {
+            width: 1.2rem;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        .sidebar-auth .auth-btn:hover {
+            background: #fce8e5;
+            color: #000000;
+            transform: translateX(4px);
+        }
+
+        .sidebar-auth .auth-btn.register-btn {
+            background: #e63946;
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.register-btn i {
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.register-btn:hover {
+            background: #c62828;
+        }
+
+        .sidebar-auth .auth-btn.signin-btn {
+            border: 2px solid #e63946;
+        }
+
+        .sidebar-auth .auth-btn.signin-btn:hover {
+            background: #fce8e5;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn {
+            background: #e63946;
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn i {
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn:hover {
+            background: #c62828;
+        }
+
+        /* Mobile Menu Toggle Button */
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: #2c1810;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            transition: 0.2s;
+            display: block;
+        }
+
+        .menu-toggle:hover {
+            color: #e63946;
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            transition: 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f4f2;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ---------- HEADER · RED & WHITE ---------- */
+        .header {
+            background: #ffffff;
+            padding: 0.6rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(180, 40, 20, 0.04);
+            border-bottom: 2px solid #e63946;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .header-left .site-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #2c1810;
+        }
+
+        .header-left .site-title i {
+            color: #e63946;
+            margin-right: 6px;
+        }
+
+        .header-left .tagline {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #e63946;
+            margin-left: 0.2rem;
+            background: #fce8e5;
+            padding: 0.15rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .header-right .btn {
+            padding: 0.35rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: transparent;
+            color: #2c1810;
+        }
+
+        .header-right .btn-register {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+            box-shadow: 0 2px 8px rgba(230, 57, 70, 0.15);
+        }
+
+        .header-right .btn-register:hover {
+            background: #c62828;
+            border-color: #c62828;
+            transform: scale(1.02);
+        }
+
+        .header-right .btn-signin {
+            background: #ffffff;
+            color: #2c1810;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-signin:hover {
+            background: #fce8e5;
+            border-color: #c62828;
+        }
+
+        .header-right .btn-signup {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+            box-shadow: 0 2px 8px rgba(230, 57, 70, 0.15);
+        }
+
+        .header-right .btn-signup:hover {
+            background: #c62828;
+            border-color: #c62828;
+            transform: scale(1.02);
+        }
+
+        /* ---------- PAGE CONTENT (cards) ---------- */
+        .page-content {
+            padding: 1.8rem 2.5rem 1.8rem;
+            max-width: 1400px;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* hero - with background image - made vertically longer */
+        .hero-section {
+            background-image: url('https://static.time.com/v3/assets/bltea6093859af6183b/bltb3bbcf6e03522a75/69892c08cf40a8309dc4bc5b/travel-the-world.jpg?branch=production&width=3840&quality=75&auto=webp&crop=3:2');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 24px;
+            padding: 6rem 3rem 4.5rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid #f0d6d0;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            flex: 0 1 auto;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 24px;
+            z-index: 1;
+        }
+
+        .hero-section h1,
+        .hero-section p {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-section h1 span {
+            background: #e63946;
+            padding: 0.05rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: none;
+            box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.95;
+            margin-top: 0.3rem;
+        }
+
+        /* ---------- SMALLER CARDS GRID ---------- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 0.8rem 0.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(180, 40, 20, 0.03);
+            border: 1px solid #f0d6d0;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 80px;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(230, 57, 70, 0.10);
+            border-color: #e63946;
+        }
+
+        .card i {
+            font-size: 1.6rem;
+            color: #e63946;
+            background: #fce8e5;
+            padding: 0.4rem;
+            border-radius: 12px;
+            margin-bottom: 0.3rem;
+            width: fit-content;
+        }
+
+        .card h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin: 0;
+        }
+
+        /* ---------- SEARCH FORMS (hidden by default) ---------- */
+        .search-form {
+            display: none;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.2rem;
+            border: 2px solid #e63946;
+            box-shadow: 0 8px 24px rgba(180, 40, 20, 0.10);
+            animation: slideDown 0.3s ease;
+        }
+
+        .search-form.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-form .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: flex-end;
+        }
+
+        .search-form .form-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .search-form .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #2c1810;
+            margin-bottom: 0.2rem;
+        }
+
+        .search-form .form-group select {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            background: #fcf8f6;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a6b5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 0.8em;
+            cursor: pointer;
+        }
+
+        .search-form .form-group select:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
+        }
+
+        .search-form .form-group select option {
+            padding: 0.3rem;
+        }
+
+        .search-form .form-group input[type="date"] {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            background: #fcf8f6;
+            cursor: pointer;
+        }
+
+        .search-form .form-group input[type="date"]:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
+        }
+
+        .search-form .search-btn {
+            background: #e63946;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 100px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .search-form .search-btn:hover {
+            background: #c62828;
+            transform: scale(1.02);
+        }
+
+        .search-form .close-btn {
+            background: transparent;
+            border: none;
+            color: #8a6b5c;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.3rem;
+            transition: 0.2s;
+        }
+
+        .search-form .close-btn:hover {
+            color: #e63946;
+            transform: rotate(90deg);
+        }
+
+        .search-form .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .search-form .form-header h4 {
+            font-size: 0.95rem;
+            color: #2c1810;
+        }
+
+        /* ---------- BOOKING IN 3 STEPS ---------- */
+        .steps-container {
+            background-image: url('https://media.istockphoto.com/id/2188496382/photo/securing-holiday-adventures-online-booking.jpg?b=1&s=1024x1024&w=0&k=20&c=s-qGZNR9Teb9Uctr5IFmayBn-sfjnWwM5JfC6JGRffw=');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 24px;
+            padding: 2.8rem 2.5rem;
+            margin-top: 1.8rem;
+            border: 2px solid #e63946;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            position: relative;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 22px;
+            z-index: 0;
+        }
+
+        .steps-container>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .steps-container .steps-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1.8rem;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .steps-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.3rem;
+            transition: 0.3s ease;
+            position: relative;
+        }
+
+        .step-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .step-item .step-icon {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+            background: rgba(230, 57, 70, 0.7);
+            padding: 0.6rem;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+        }
+
+        .step-item:hover .step-icon {
+            background: #e63946;
+            transform: scale(1.05);
+            border-color: #ffffff;
+        }
+
+        .step-item h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-arrow {
+            font-size: 1.6rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            padding: 0 0.2rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ---------- ABOUT SECTION ---------- */
+        .about-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 1.8rem;
+            box-shadow: 0 6px 18px rgba(180, 40, 20, 0.06);
+            border: 2px solid #e63946;
+            transition: 0.3s;
+            scroll-margin-top: 80px;
+        }
+
+        .about-section:hover {
+            box-shadow: 0 12px 32px rgba(230, 57, 70, 0.10);
+        }
+
+        .about-text {
+            flex: 1.2;
+            min-width: 240px;
+        }
+
+        .about-text h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.3px;
+        }
+
+        .about-text h2 i {
+            color: #e63946;
+            margin-right: 6px;
+        }
+
+        .about-text p {
+            color: #3d2a1e;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 0.6rem;
+        }
+
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 200px;
+            max-width: 380px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f0d6d0;
+            transition: 0.3s;
+        }
+
+        .about-image:hover {
+            transform: scale(1.01);
+            border-color: #e63946;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ---------- FAQ SECTION ---------- */
+        .faq-section {
+            margin-top: 1.8rem;
+        }
+
+        .faq-section .faq-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c1810;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-section .faq-title i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .faq-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.7rem;
+            border: 2px solid #e63946;
+            box-shadow: 0 4px 12px rgba(180, 40, 20, 0.04);
+            transition: 0.3s ease;
+        }
+
+        .faq-box:hover {
+            box-shadow: 0 8px 24px rgba(230, 57, 70, 0.08);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            gap: 0.8rem;
+            padding: 0.2rem 0;
+        }
+
+        .faq-question h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c1810;
+            transition: 0.2s;
+        }
+
+        .faq-question:hover h3 {
+            color: #e63946;
+        }
+
+        .faq-question .faq-toggle {
+            font-size: 1.1rem;
+            color: #e63946;
+            transition: 0.3s;
+            flex-shrink: 0;
+            width: 26px;
+            text-align: center;
+        }
+
+        .faq-question .faq-toggle i {
+            transition: 0.3s;
+        }
+
+        .faq-question.active .faq-toggle i {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            padding: 0 0.3rem;
+        }
+
+        .faq-answer.open {
+            max-height: 300px;
+            padding: 0.5rem 0.3rem 0.2rem 0.3rem;
+        }
+
+        .faq-answer p {
+            color: #3d2a1e;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ---------- FOOTER SECTION - NEWSLETTER AT TOP, FULL BLACK ---------- */
+        .footer {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 0;
+            margin-top: 1.8rem;
+            border-top: 3px solid #e63946;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        .footer-newsletter {
+            background: #1a1a1a;
+            padding: 2.5rem 2.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-newsletter .newsletter-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .footer-newsletter .newsletter-text h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .footer-newsletter .newsletter-text h3 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-newsletter .newsletter-text p {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-top: 0.2rem;
+        }
+
+        .footer-newsletter .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-newsletter .newsletter-form input {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.2s;
+            min-width: 220px;
+        }
+
+        .footer-newsletter .newsletter-form input::placeholder {
+            color: #888888;
+        }
+
+        .footer-newsletter .newsletter-form input:focus {
+            border-color: #e63946;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-newsletter .newsletter-form .subscribe-btn {
+            padding: 0.6rem 1.8rem;
+            background: #e63946;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .footer-newsletter .newsletter-form .subscribe-btn:hover {
+            background: #c62828;
+            transform: scale(1.02);
+        }
+
+        .footer-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2.5rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+            gap: 2rem;
+        }
+
+        .footer-main .brand-footer {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-main .brand-footer i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-main p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-main h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-main h3 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-main .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-main .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-main .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .footer-main .footer-links a:hover {
+            color: #e63946;
+            padding-left: 4px;
+        }
+
+        .footer-main .app-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-main .app-buttons a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-main .app-buttons a:hover {
+            background: rgba(230, 57, 70, 0.3);
+            border-color: #e63946;
+        }
+
+        .footer-main .app-buttons a i {
+            font-size: 1.2rem;
+            color: #e63946;
+        }
+
+        .footer-main .social-icons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-main .social-icons a {
+            color: #cccccc;
+            font-size: 1.3rem;
+            transition: 0.2s;
+        }
+
+        .footer-main .social-icons a:hover {
+            color: #e63946;
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem 2.5rem;
+            background: #1a1a1a;
+        }
+
+        .footer-bottom .bottom-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .footer-bottom p {
+            font-size: 0.8rem;
+            color: #888888;
+            margin: 0;
+        }
+
+        .footer-bottom .bottom-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-bottom .bottom-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .footer-bottom .bottom-links a:hover {
+            color: #e63946;
+        }
+
+        /* ================================================================ */
+        /* ===== RESPONSIVENESS - Media Queries ===== */
+        /* ================================================================ */
+
+        /* Mobile Devices - Hide header buttons, show in sidebar */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+                left: -300px;
+            }
+
+            /* ===== SIDEBAR AUTH BUTTONS VISIBLE ON MOBILE ===== */
+            .sidebar-auth {
+                display: flex;
+            }
+
+            /* ===== HEADER - Only logo + menu on mobile ===== */
+            .header {
+                padding: 0.5rem 1rem;
+                gap: 0.3rem;
+            }
+
+            .header-left {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .header-left .site-title {
+                font-size: 1.2rem;
+            }
+
+            .header-left .tagline {
+                display: none;
+            }
+
+            .menu-toggle {
+                font-size: 1.2rem;
+                padding: 0.1rem 0.3rem;
+            }
+
+            /* Hide header buttons on mobile */
+            .header-right {
+                display: none;
+            }
+
+            /* ===== PAGE CONTENT ===== */
+            .page-content {
+                padding: 1.2rem 1rem;
+            }
+
+            .hero-section {
+                padding: 3.5rem 1.5rem 2.5rem;
+                min-height: 320px;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-section p {
+                font-size: 0.95rem;
+                letter-spacing: 2px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.7rem;
+            }
+
+            .card {
+                padding: 0.6rem 0.3rem;
+                min-height: 70px;
+            }
+
+            .card i {
+                font-size: 1.2rem;
+                padding: 0.3rem;
+            }
+
+            .card h3 {
+                font-size: 0.75rem;
+            }
+
+            .search-form .form-row {
+                flex-direction: column;
+            }
+
+            .search-form .form-group {
+                min-width: 100%;
+            }
+
+            .search-form .search-btn {
+                width: 100%;
+            }
+
+            .steps-container {
+                padding: 2rem 1.5rem;
+                min-height: 200px;
+            }
+
+            .steps-container .steps-title {
+                font-size: 1.6rem;
+            }
+
+            .steps-grid {
+                gap: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .step-item .step-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8rem;
+                padding: 0.4rem;
+            }
+
+            .step-item h3 {
+                font-size: 1.1rem;
+            }
+
+            .step-arrow {
+                transform: rotate(90deg);
+                font-size: 1.2rem;
+                padding: 0.1rem 0;
+            }
+
+            .about-section {
+                flex-direction: column;
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+
+            .about-text {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .about-text h2 {
+                font-size: 1.3rem;
+            }
+
+            .about-image {
+                min-width: 0;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .about-image img {
+                max-height: 220px;
+            }
+
+            .faq-section .faq-title {
+                font-size: 1.3rem;
+            }
+
+            .faq-box {
+                padding: 0.7rem 1rem;
+            }
+
+            .faq-question h3 {
+                font-size: 0.8rem;
+            }
+
+            .footer-newsletter {
+                padding: 1.5rem 1.2rem;
+            }
+            .footer-newsletter .newsletter-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-newsletter .newsletter-form {
+                width: 100%;
+                flex-direction: column;
+            }
+            .footer-newsletter .newsletter-form input {
+                width: 100%;
+                min-width: auto;
+            }
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem 1.2rem;
+            }
+            .footer-bottom {
+                padding: 1rem 1.2rem;
+            }
+            .footer-bottom .bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Small Mobile (≤ 480px) */
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.3rem 0.5rem;
+            }
+
+            .header-left .site-title {
+                font-size: 0.9rem;
+            }
+
+            .header-left .site-title i {
+                margin-right: 3px;
+            }
+
+            .menu-toggle {
+                font-size: 0.9rem;
+                padding: 0.1rem 0.15rem;
+            }
+
+            .hero-section {
+                padding: 3rem 1rem 2rem;
+                min-height: 280px;
+            }
+
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-section p {
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .card {
+                padding: 0.5rem 0.2rem;
+                min-height: 60px;
+                border-radius: 12px;
+            }
+
+            .card i {
+                font-size: 1rem;
+                padding: 0.25rem;
+                border-radius: 8px;
+                margin-bottom: 0.15rem;
+            }
+
+            .card h3 {
+                font-size: 0.65rem;
+            }
+
+            .steps-container {
+                padding: 1.5rem 1rem;
+                min-height: 180px;
+            }
+
+            .steps-container .steps-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+
+            .step-item .step-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.5rem;
+                padding: 0.3rem;
+            }
+
+            .step-item h3 {
+                font-size: 0.95rem;
+            }
+
+            .about-section {
+                padding: 1rem;
+            }
+
+            .about-text h2 {
+                font-size: 1.1rem;
+            }
+
+            .about-text p {
+                font-size: 0.8rem;
+                line-height: 1.5;
+            }
+
+            .about-image img {
+                max-height: 160px;
+            }
+
+            .search-form {
+                padding: 1rem;
+            }
+
+            .search-form .form-header h4 {
+                font-size: 0.8rem;
+            }
+
+            .faq-section .faq-title {
+                font-size: 1.1rem;
+            }
+
+            .faq-box {
+                padding: 0.6rem 0.8rem;
+            }
+
+            .faq-question h3 {
+                font-size: 0.75rem;
+            }
+
+            .faq-answer p {
+                font-size: 0.75rem;
+            }
+
+            .footer-newsletter {
+                padding: 1.2rem 1rem;
+            }
+            .footer-newsletter .newsletter-text h3 {
+                font-size: 1rem;
+            }
+            .footer-main {
+                padding: 1.2rem 1rem;
+            }
+            .footer-main .brand-footer {
+                font-size: 1.4rem;
+            }
+            .footer-main h3 {
+                font-size: 0.95rem;
+            }
+            .footer-bottom {
+                padding: 0.8rem 1rem;
+            }
+            .footer-bottom .bottom-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.4rem;
+            }
+
+            .card {
+                padding: 0.4rem 0.15rem;
+                min-height: 50px;
+                border-radius: 10px;
+            }
+
+            .card i {
+                font-size: 0.85rem;
+                padding: 0.2rem;
+                border-radius: 6px;
+                margin-bottom: 0.1rem;
+            }
+
+            .card h3 {
+                font-size: 0.55rem;
+            }
+
+            .hero-section {
+                padding: 2rem 0.8rem 1.5rem;
+                min-height: 220px;
+            }
+
+            .hero-section h1 {
+                font-size: 1.4rem;
+            }
+
+            .hero-section p {
+                font-size: 0.6rem;
+                letter-spacing: 0.5px;
+            }
+        }
+
+        /* Tablet (769px - 1024px) - Buttons remain in header */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .header {
+                padding: 0.6rem 1.5rem;
+            }
+
+            .header-right .btn {
+                padding: 0.3rem 0.9rem;
+                font-size: 0.7rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .footer-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Desktop (1025px and above) - Full header with buttons */
+        @media (min-width: 1025px) {
+            .cards-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Bookkaru</span>
+        </div>
+        <nav>
+            <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
+            <a href="#about-section"><i class="fas fa-info-circle"></i> About</a>
+            <a href="#faq-section"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="whychooseus.html"><i class="fas fa-star"></i> Why choose us</a>
+        </nav>
+
+        <!-- Sidebar Auth Buttons (Mobile Only) -->
+        <div class="sidebar-auth">
+            <a href="register.html" class="auth-btn register-btn"><i class="fas fa-handshake"></i> Become a partner</a>
+            <a href="signin.html" class="auth-btn signin-btn"><i class="fas fa-sign-in-alt"></i> Sign in</a>
+            <a href="signup.html" class="auth-btn signup-btn"><i class="fas fa-user-plus"></i> Sign up</a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="site-title"><i class="fas fa-ticket-alt"></i> Bookkaru</div>
+            </div>
+            <div class="header-right">
+                <a href="register.html" class="btn btn-register" style="text-decoration: none;">Become a partner</a>
+                <a href="signin.html" class="btn btn-signin" style="text-decoration: none;">Sign in</a>
+                <a href="signup.html" class="btn btn-signup" style="text-decoration: none;">Sign up</a>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+            <!-- hero -->
+            <div class="hero-section">
+                <h1>Travel with us <span>EXPLORE</span> the world</h1>
+                <p>— discover your next adventure —</p>
+            </div>
+
+            <!-- service cards -->
+            <div class="cards-grid">
+                <div class="card" id="busCard">
+                    <i class="fas fa-bus"></i>
+                    <h3>Bus</h3>
+                </div>
+                <div class="card" id="flightCard">
+                    <i class="fas fa-plane-departure"></i>
+                    <h3>Flight</h3>
+                </div>
+                <a href="events.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>Event</h3>
+                    </div>
+                </a>
+                <div class="card" id="carCard">
+                    <i class="fas fa-car"></i>
+                    <h3>Car</h3>
+                </div>
+                <a href="cinema.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <i class="fas fa-film"></i>
+                        <h3>Cinema</h3>
+                    </div>
+                </a>
+                <a href="attractions.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h3>Attractions</h3>
+                    </div>
+                </a>
+                <a href="tours.html" style="text-decoration: none; color: inherit;">
+                    <div class="card">
+                        <i class="fas fa-umbrella-beach"></i>
+                        <h3>Tours</h3>
+                    </div>
+                </a>
+            </div>
+
+            <!-- BUS SEARCH FORM -->
+            <div class="search-form" id="busSearchForm">
+                <div class="form-header">
+                    <h4><i class="fas fa-bus" style="color:#e63946;"></i> Search Available Buses</h4>
+                    <button class="close-btn" id="closeBusForm"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>From</label>
+                        <select id="busFromCity">
+                            <option value="">Select City</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Bahawalpur">Bahawalpur</option>
+                            <option value="Sargodha">Sargodha</option>
+                            <option value="Sukkur">Sukkur</option>                           
+                            <option value="Abbottabad">Abbottabad</option>
+                            <option value="Mardan">Mardan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <select id="busToCity">
+                            <option value="">Select City</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Bahawalpur">Bahawalpur</option>
+                            <option value="Sargodha">Sargodha</option>
+                            <option value="Sukkur">Sukkur</option>
+                            <option value="Abbottabad">Abbottabad</option>
+                            <option value="Mardan">Mardan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="busTravelDate" min="">
+                    </div>
+                    <div class="form-group">
+                        <button class="search-btn" id="searchBusesBtn"><i class="fas fa-search"></i> Search Buses</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FLIGHT SEARCH FORM -->
+            <div class="search-form" id="flightSearchForm">
+                <div class="form-header">
+                    <h4><i class="fas fa-plane-departure" style="color:#e63946;"></i> Search Available Flights</h4>
+                    <button class="close-btn" id="closeFlightForm"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>From</label>
+                        <select id="flightFromCity">
+                            <option value="">Select City</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Bahawalpur">Bahawalpur</option>
+                            <option value="Sargodha">Sargodha</option>
+                            <option value="Sukkur">Sukkur</option>                           
+                            <option value="Abbottabad">Abbottabad</option>
+                            <option value="Mardan">Mardan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <select id="flightToCity">
+                            <option value="">Select City</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Bahawalpur">Bahawalpur</option>
+                            <option value="Sargodha">Sargodha</option>
+                            <option value="Sukkur">Sukkur</option>
+                            <option value="Abbottabad">Abbottabad</option>
+                            <option value="Mardan">Mardan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="flightTravelDate" min="">
+                    </div>
+                    <div class="form-group">
+                        <button class="search-btn" id="searchFlightsBtn"><i class="fas fa-search"></i> Search Flights</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CAR SEARCH FORM -->
+            <div class="search-form" id="carSearchForm">
+                <div class="form-header">
+                    <h4><i class="fas fa-car" style="color:#e63946;"></i> Search Available Cars</h4>
+                    <button class="close-btn" id="closeCarForm"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>From</label>
+                        <select id="carFromCity">
+                            <option value="">Select City</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Bahawalpur">Bahawalpur</option>
+                            <option value="Sargodha">Sargodha</option>
+                            <option value="Sukkur">Sukkur</option>                           
+                            <option value="Abbottabad">Abbottabad</option>
+                            <option value="Mardan">Mardan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <select id="carToCity">
+                            <option value="">Select City</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Islamabad">Islamabad</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Peshawar">Peshawar</option>
+                            <option value="Quetta">Quetta</option>
+                            <option value="Sialkot">Sialkot</option>
+                            <option value="Gujranwala">Gujranwala</option>
+                            <option value="Bahawalpur">Bahawalpur</option>
+                            <option value="Sargodha">Sargodha</option>
+                            <option value="Sukkur">Sukkur</option>
+                            <option value="Abbottabad">Abbottabad</option>
+                            <option value="Mardan">Mardan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="carTravelDate" min="">
+                    </div>
+                    <div class="form-group">
+                        <button class="search-btn" id="searchCarsBtn"><i class="fas fa-search"></i> Search Cars</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOOKING IN 3 STEPS -->
+            <div class="steps-container">
+                <div class="steps-title">Booking in 3 steps</div>
+                <div class="steps-grid">
+                    <div class="step-item">
+                        <div class="step-icon"><i class="fas fa-search"></i></div>
+                        <h3>Search</h3>
+                    </div>
+                    <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="step-item">
+                        <div class="step-icon"><i class="fas fa-hand-pointer"></i></div>
+                        <h3>Select</h3>
+                    </div>
+                    <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="step-item">
+                        <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                        <h3>Pay</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABOUT SECTION -->
+            <div class="about-section" id="about-section">
+                <div class="about-text">
+                    <h2><i class="fas fa-ticket-alt"></i> Pakistan's No.1 Online Ticket Booking Portal</h2>
+                    <p>Welcome to <strong>Bookkaru</strong>, Pakistan's leading online ticket booking portal! Travelling can be a hassle, whether navigating crowded terminals, waiting in long queues, or coordinating with multiple agents. That's why we've created a seamless, all-in-one online booking platform developed to ease your travel planning.</p>
+                    <p>At Bookkaru, we're proud to offer Pakistan's e-ticketing technology, to transform your journeys. Our user-friendly app provides extensive services, allowing you effortless exposure and purchase bus, flight and event tickets. Additionally, our online ticket booking offers options for tours and attractions, ensuring that all your travel needs are met in one convenient place.</p>
+                    <p>With Bookkaru, you're not just purchasing e-tickets, but exploring a smoother, faster, and more enjoyable travel experience. Join thousands of satisfied customers who trust our top travel online booking portal in Pakistan.</p>
+                    <p><strong>Experience the ease and efficiency of Booking tickets online.</strong></p>
+                </div>
+                <div class="about-image">
+                    <img src="https://img.magnific.com/free-photo/couple-family-traveling-together_1150-7772.jpg?semt=ais_test_b&w=740&q=80" alt="Traveling together with Bookkaru">
+                </div>
+            </div>
+
+            <!-- FAQ SECTION -->
+           <div class="faq-section" id="faq-section">
+                <h2 class="faq-title"><i class="fas fa-question-circle"></i> FREQUENTLY ASKED QUESTIONS</h2>
+                
+                <div class="faq-box">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h3>What is Bookkaru?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Bookkaru is Pakistan's leading e-ticketing platform, offering a fast and simple way to book bus, train, flight, and event e-tickets. Our app provides a seamless booking experience, allowing you to plan your trips and events with just a few clicks.</p>
+                    </div>
+                </div>
+
+                <div class="faq-box">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h3>How do I create an account on Bookkaru?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Creating an account on Bookkaru is simple! Click on the "Sign up" button in the top right corner, fill in your details including username, email address, phone number, and password. Once you confirm your account, you can start booking tickets immediately.</p>
+                    </div>
+                </div>
+
+                <div class="faq-box">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h3>How can I book a ticket using Bookkaru?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Booking a ticket on Bookkaru is quick and easy. Simply select your preferred service (Bus, Flight, Car, Event, Cinema, Attractions, or Tours), enter your journey details including from, to, and date, then click search. Choose from the available options and complete your payment to confirm your booking.</p>
+                    </div>
+                </div>
+
+                <div class="faq-box">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h3>What payment methods are accepted on Bookkaru?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Bookkaru accepts multiple payment methods including credit/debit cards, bank transfers, jazzcash, easypaisa, and other digital payment options. All transactions are secure and encrypted for your safety.</p>
+                    </div>
+                </div>
+
+                <div class="faq-box">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h3>Can I cancel or modify my booking?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, you can cancel or modify your booking through your Bookkaru account. Please note that cancellation policies may vary depending on the service provider and the time of cancellation. You can find detailed information in your booking confirmation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-box">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <h3>How do I receive my e-ticket?</h3>
+                        <span class="faq-toggle"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>After completing your booking, you will receive your e-ticket via email and SMS. You can also view and download your e-ticket from your Bookkaru account under "My Bookings". Simply present the e-ticket at the counter or scan it at the entry point.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER SECTION -->
+            <footer class="footer">
+                <div class="footer-newsletter">
+                    <div class="newsletter-content">
+                        <div class="newsletter-text">
+                            <h3><i class="fas fa-envelope"></i> SUBSCRIBE TO NEWSLETTER</h3>
+                            <p>Stay up to date with the latest news, announcements and articles.</p>
+                        </div>
+                        <div class="newsletter-form">
+                            <input type="email" placeholder="Enter your Email here">
+                            <button class="subscribe-btn">SUBSCRIBE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-main">
+                    <div>
+                        <div class="brand-footer">
+                            <i class="fas fa-ticket-alt"></i> BOOKKARU
+                        </div>
+                        <p>Purchasing a bus or flight ticket has never been simple. It always proved time-consuming, whether you had to drive to a bus terminal, visit a travel agency, or wait in long queues.</p>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-link"></i> USEFUL LINKS</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#about-section">About</a></li>
+                            <li><a href="#faq-section">FAQ</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Terms &amp; Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Booking Terms &amp; Conditions</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-concierge-bell"></i> SERVICES</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Bus</a></li>
+                            <li><a href="#">Flight</a></li>
+                            <li><a href="#">Car</a></li>
+                            <li><a href="#">Cinema</a></li>
+                            <li><a href="#">Events</a></li>
+                            <li><a href="#">Attractions</a></li>
+                            <li><a href="#">Tours</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-mobile-alt"></i> GET THE APP</h3>
+                        <div class="app-buttons">
+                            <a href="#"><i class="fab fa-google-play"></i> Google Play</a>
+                            <a href="#"><i class="fab fa-apple"></i> App Store</a>
+                        </div>
+                        <h3 style="margin-top: 1.5rem;"><i class="fas fa-share-alt"></i> KEEP IN TOUCH</h3>
+                        <div class="social-icons">
+                            <a href="#"><i class="fab fa-facebook"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <div class="bottom-content">
+                        <p>Copyright © 2026 Bookkaru.com | All Rights Reserved</p>
+                        <div class="bottom-links">
+                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Booking Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            function setMinDate() {
+                const today = new Date().toISOString().split('T')[0];
+                document.querySelectorAll('input[type="date"]').forEach(input => {
+                    input.setAttribute('min', today);
+                });
+            }
+            setMinDate();
+
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+            }
+
+            menuToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            document.querySelectorAll('.sidebar nav a, .sidebar-auth .auth-btn').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.sidebar nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            const busCard = document.getElementById('busCard');
+            const busForm = document.getElementById('busSearchForm');
+            const closeBusForm = document.getElementById('closeBusForm');
+
+            busCard.addEventListener('click', function() {
+                document.querySelectorAll('.search-form').forEach(form => {
+                    if (form.id !== 'busSearchForm') form.classList.remove('active');
+                });
+                busForm.classList.toggle('active');
+                if (busForm.classList.contains('active')) {
+                    setTimeout(() => {
+                        busForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+
+            closeBusForm.addEventListener('click', function() {
+                busForm.classList.remove('active');
+            });
+
+            const flightCard = document.getElementById('flightCard');
+            const flightForm = document.getElementById('flightSearchForm');
+            const closeFlightForm = document.getElementById('closeFlightForm');
+
+            flightCard.addEventListener('click', function() {
+                document.querySelectorAll('.search-form').forEach(form => {
+                    if (form.id !== 'flightSearchForm') form.classList.remove('active');
+                });
+                flightForm.classList.toggle('active');
+                if (flightForm.classList.contains('active')) {
+                    setTimeout(() => {
+                        flightForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+
+            closeFlightForm.addEventListener('click', function() {
+                flightForm.classList.remove('active');
+            });
+
+            const carCard = document.getElementById('carCard');
+            const carForm = document.getElementById('carSearchForm');
+            const closeCarForm = document.getElementById('closeCarForm');
+
+            carCard.addEventListener('click', function() {
+                document.querySelectorAll('.search-form').forEach(form => {
+                    if (form.id !== 'carSearchForm') form.classList.remove('active');
+                });
+                carForm.classList.toggle('active');
+                if (carForm.classList.contains('active')) {
+                    setTimeout(() => {
+                        carForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                }
+            });
+
+            closeCarForm.addEventListener('click', function() {
+                carForm.classList.remove('active');
+            });
+
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.search-form').forEach(form => {
+                    if (form.classList.contains('active')) {
+                        const cardId = form.id.replace('SearchForm', 'Card');
+                        const card = document.getElementById(cardId);
+                        const isClickInside = form.contains(e.target) || (card && card.contains(e.target));
+                        if (!isClickInside) {
+                            form.classList.remove('active');
+                        }
+                    }
+                });
+            });
+
+            document.getElementById('searchBusesBtn').addEventListener('click', function() {
+                const from = document.getElementById('busFromCity').value;
+                const to = document.getElementById('busToCity').value;
+                const date = document.getElementById('busTravelDate').value;
+                
+                if (!from || !to) {
+                    alert('⚠️ Please select both "From" and "To" cities.');
+                    return;
+                }
+                if (from === to) {
+                    alert('⚠️ "From" and "To" cities cannot be the same.');
+                    return;
+                }
+                alert(`🔍 Searching buses from ${from} to ${to} on ${date || 'any date'}`);
+            });
+
+            document.getElementById('searchFlightsBtn').addEventListener('click', function() {
+                const from = document.getElementById('flightFromCity').value;
+                const to = document.getElementById('flightToCity').value;
+                const date = document.getElementById('flightTravelDate').value;
+                if (!from || !to) {
+                    alert('⚠️ Please select both "From" and "To" cities.');
+                    return;
+                }
+                if (from === to) {
+                    alert('⚠️ "From" and "To" cities cannot be the same.');
+                    return;
+                }
+                alert(`✈️ Searching flights from ${from} to ${to} on ${date || 'any date'}`);
+            });
+
+            document.getElementById('searchCarsBtn').addEventListener('click', function() {
+                const from = document.getElementById('carFromCity').value;
+                const to = document.getElementById('carToCity').value;
+                const date = document.getElementById('carTravelDate').value;
+                if (!from || !to) {
+                    alert('⚠️ Please select both "From" and "To" cities.');
+                    return;
+                }
+                if (from === to) {
+                    alert('⚠️ "From" and "To" cities cannot be the same.');
+                    return;
+                }
+                alert(`🚗 Searching cars from ${from} to ${to} on ${date || 'any date'}`);
+            });
+
+            document.querySelector('.subscribe-btn').addEventListener('click', function() {
+                const email = document.querySelector('.newsletter-form input').value;
+                if (!email) {
+                    alert('⚠️ Please enter your email address.');
+                    return;
+                }
+                if (!email.includes('@') || !email.includes('.')) {
+                    alert('⚠️ Please enter a valid email address.');
+                    return;
+                }
+                alert('✅ Thank you for subscribing to our newsletter!');
+                document.querySelector('.newsletter-form input').value = '';
+            });
+        })();
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const toggleIcon = element.querySelector('.faq-toggle i');
+            
+            const allAnswers = document.querySelectorAll('.faq-answer');
+            const allQuestions = document.querySelectorAll('.faq-question');
+            
+            allAnswers.forEach(ans => {
+                if (ans !== answer && ans.classList.contains('open')) {
+                    ans.classList.remove('open');
+                }
+            });
+            
+            allQuestions.forEach(q => {
+                if (q !== element && q.classList.contains('active')) {
+                    q.classList.remove('active');
+                }
+            });
+            
+            answer.classList.toggle('open');
+            element.classList.toggle('active');
+            
+            if (answer.classList.contains('open')) {
+                toggleIcon.className = 'fas fa-minus';
+            } else {
+                toggleIcon.className = 'fas fa-plus';
+            }
+        }
+    </script>
+</body>
+</html>
