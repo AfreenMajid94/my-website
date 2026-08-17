@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookkaru · Events</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f8f4f2;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            color: #2c1810;
+            padding: 1.5rem 1rem 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 16px rgba(180, 40, 20, 0.08);
+            position: fixed;
+            top: 0;
+            left: -280px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            border-right: 2px solid #e63946;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2rem;
+            color: #2c1810;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 0.8rem;
+        }
+
+        .sidebar .brand i {
+            color: #e63946;
+            font-size: 1.4rem;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex: 1;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .sidebar nav a i {
+            display: inline-block;
+            width: 1.2rem;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        .sidebar nav a:hover {
+            background: #fce8e5;
+            color: #000000;
+            transform: translateX(4px);
+        }
+
+        .sidebar nav a.active {
+            background: #e63946;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
+        }
+
+        .sidebar nav a.active i {
+            color: #ffffff;
+        }
+
+        /* ----- Sidebar Auth Buttons (Mobile only) ----- */
+        .sidebar-auth {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #f0d6d0;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-auth .auth-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .sidebar-auth .auth-btn i {
+            width: 1.2rem;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        .sidebar-auth .auth-btn:hover {
+            background: #fce8e5;
+            color: #000000;
+            transform: translateX(4px);
+        }
+
+        .sidebar-auth .auth-btn.register-btn {
+            background: #e63946;
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.register-btn i {
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.register-btn:hover {
+            background: #c62828;
+        }
+
+        .sidebar-auth .auth-btn.signin-btn {
+            border: 2px solid #e63946;
+        }
+
+        .sidebar-auth .auth-btn.signin-btn:hover {
+            background: #fce8e5;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn {
+            background: #e63946;
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn i {
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn:hover {
+            background: #c62828;
+        }
+
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: #2c1810;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            display: block;
+        }
+
+        .menu-toggle:hover {
+            color: #e63946;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            transition: 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f4f2;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ---------- HEADER ---------- */
+        .header {
+            background: #ffffff;
+            padding: 0.6rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e63946;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .header-left .site-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c1810;
+        }
+
+        .header-left .site-title i {
+            color: #e63946;
+            margin-right: 6px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .header-right .btn {
+            padding: 0.35rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: transparent;
+            color: #2c1810;
+        }
+
+        .header-right .btn-register {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-register:hover {
+            background: #c62828;
+        }
+
+        .header-right .btn-signin {
+            background: #ffffff;
+            color: #2c1810;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-signin:hover {
+            background: #fce8e5;
+        }
+
+        .header-right .btn-signup {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-signup:hover {
+            background: #c62828;
+        }
+
+        /* ---------- PAGE CONTENT ---------- */
+        .page-content {
+            padding: 1.8rem 2.5rem 1.8rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---------- EVENTS HERO WITH BACKGROUND IMAGE ---------- */
+        .events-hero {
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyXtGxOvYq--bHiK8d1gbUHjBZIfPb6-iunt33bRHUe0fyTN2b7nmx4EU&s=10');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 24px;
+            padding: 4rem 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #ffffff;
+            border: 2px solid #e63946;
+            box-shadow: 0 8px 24px rgba(230, 57, 70, 0.2);
+            position: relative;
+            overflow: hidden;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .events-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 22px;
+            z-index: 0;
+        }
+
+        .events-hero .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .events-hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .events-hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Search & Filter Bar */
+        .search-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-filter-bar .filter-group {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .filter-btn.active {
+            background: #ffffff;
+            color: #e63946;
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .search-filter-bar input {
+            flex: 1;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            min-width: 150px;
+            outline: none;
+        }
+
+        .search-filter-bar input::placeholder {
+            color: #888;
+        }
+
+        .search-filter-bar .search-btn {
+            padding: 0.7rem 2rem;
+            background: #ffffff;
+            color: #e63946;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .search-filter-bar .search-btn:hover {
+            background: #fce8e5;
+            transform: scale(1.02);
+        }
+
+        /* ---------- EVENTS CONTAINER ---------- */
+        .events-container {
+            margin-top: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-bottom: 0.8rem;
+            scroll-margin-top: 80px;
+        }
+
+        .section-title i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        /* ---------- EVENTS GRID ---------- */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .event-card {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 2px solid #f0d6d0;
+            transition: 0.3s ease;
+            cursor: pointer;
+        }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(230, 57, 70, 0.12);
+            border-color: #e63946;
+        }
+
+        .event-card .event-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .event-card .event-info {
+            padding: 0.6rem 0.7rem 0.5rem;
+        }
+
+        .event-card .event-info .event-badge {
+            display: inline-block;
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+
+        .event-card .event-info .event-badge.event {
+            background: #e63946;
+            color: #fff;
+        }
+
+        .event-card .event-info .event-badge.course {
+            background: #2c7be5;
+            color: #fff;
+        }
+
+        .event-card .event-info .event-badge.session {
+            background: #f59f00;
+            color: #fff;
+        }
+
+        .event-card .event-info h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-bottom: 0.15rem;
+        }
+
+        .event-card .event-info .event-detail {
+            font-size: 0.7rem;
+            color: #6b4f3e;
+        }
+
+        .event-card .event-info .event-detail i {
+            color: #e63946;
+            width: 14px;
+        }
+
+        .event-card .event-info .event-date {
+            font-size: 0.65rem;
+            color: #e63946;
+            font-weight: 600;
+            margin-top: 0.15rem;
+        }
+
+        .event-card .event-info .event-price {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-top: 0.15rem;
+        }
+
+        .event-card .event-info .event-price span {
+            color: #e63946;
+        }
+
+        /* ---------- MODAL ---------- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 28px;
+            max-width: 480px;
+            width: 92%;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid #e63946;
+            animation: modalFade 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalFade {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-box h2 {
+            font-size: 1.3rem;
+            color: #2c1810;
+            margin-bottom: 0.2rem;
+        }
+
+        .modal-box .event-sub {
+            color: #e63946;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .modal-box .form-group {
+            margin-bottom: 0.8rem;
+        }
+
+        .modal-box .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: #2c1810;
+            margin-bottom: 0.15rem;
+        }
+
+        .modal-box .form-group select {
+            width: 100%;
+            padding: 0.45rem 0.7rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: #fcf8f6;
+        }
+
+        .modal-box .form-group select:focus {
+            border-color: #e63946;
+            outline: none;
+        }
+
+        .modal-box .form-group input {
+            width: 100%;
+            padding: 0.45rem 0.7rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: #fcf8f6;
+        }
+
+        .modal-box .form-group input:focus {
+            border-color: #e63946;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.7rem;
+            margin-top: 1rem;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 0.55rem;
+            border-radius: 40px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .modal-actions .btn-continue {
+            background: #e63946;
+            color: #fff;
+        }
+
+        .modal-actions .btn-continue:hover {
+            background: #c62828;
+        }
+
+        .modal-actions .btn-cancel {
+            background: #f0d6d0;
+            color: #2c1810;
+        }
+
+        .modal-actions .btn-cancel:hover {
+            background: #dbb8b0;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 0;
+            margin-top: 1.8rem;
+            border-top: 3px solid #e63946;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        .footer-newsletter {
+            background: #1a1a1a;
+            padding: 2.5rem 2.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-newsletter .newsletter-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .footer-newsletter .newsletter-text h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .footer-newsletter .newsletter-text h3 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-newsletter .newsletter-text p {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-top: 0.2rem;
+        }
+
+        .footer-newsletter .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-newsletter .newsletter-form input {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.2s;
+            min-width: 220px;
+        }
+
+        .footer-newsletter .newsletter-form input::placeholder {
+            color: #888888;
+        }
+
+        .footer-newsletter .newsletter-form input:focus {
+            border-color: #e63946;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-newsletter .newsletter-form .subscribe-btn {
+            padding: 0.6rem 1.8rem;
+            background: #e63946;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .footer-newsletter .newsletter-form .subscribe-btn:hover {
+            background: #c62828;
+            transform: scale(1.02);
+        }
+
+        .footer-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2.5rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+            gap: 2rem;
+        }
+
+        .footer-main .brand-footer {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-main .brand-footer i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-main p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-main h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-main h3 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-main .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-main .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-main .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .footer-main .footer-links a:hover {
+            color: #e63946;
+            padding-left: 4px;
+        }
+
+        .footer-main .app-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-main .app-buttons a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-main .app-buttons a:hover {
+            background: rgba(230, 57, 70, 0.3);
+            border-color: #e63946;
+        }
+
+        .footer-main .app-buttons a i {
+            font-size: 1.2rem;
+            color: #e63946;
+        }
+
+        .footer-main .social-icons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-main .social-icons a {
+            color: #cccccc;
+            font-size: 1.3rem;
+            transition: 0.2s;
+        }
+
+        .footer-main .social-icons a:hover {
+            color: #e63946;
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem 2.5rem;
+            background: #1a1a1a;
+        }
+
+        .footer-bottom .bottom-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .footer-bottom p {
+            font-size: 0.8rem;
+            color: #888888;
+            margin: 0;
+        }
+
+        .footer-bottom .bottom-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-bottom .bottom-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .footer-bottom .bottom-links a:hover {
+            color: #e63946;
+        }
+
+        /* ================================================================ */
+        /* ===== RESPONSIVE - Mobile Only ===== */
+        /* ================================================================ */
+
+        /* Tablet & Small Laptops (769px - 1024px) */
+        @media (max-width: 1024px) {
+            .footer-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .events-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .events-hero {
+                min-height: 300px;
+                padding: 3rem 2rem;
+            }
+            .events-hero h1 {
+                font-size: 2.4rem;
+            }
+            .search-filter-bar {
+                max-width: 100%;
+                border-radius: 30px;
+                padding: 0.4rem;
+            }
+            .filter-btn {
+                font-size: 0.7rem;
+                padding: 0.4rem 0.9rem;
+            }
+        }
+
+        /* Mobile Devices (≤ 768px) */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+                left: -300px;
+            }
+
+            /* ===== SIDEBAR AUTH BUTTONS VISIBLE ON MOBILE ===== */
+            .sidebar-auth {
+                display: flex;
+            }
+
+            /* ===== HEADER - Remove buttons, only logo + menu ===== */
+            .header {
+                padding: 0.5rem 1rem;
+                gap: 0.3rem;
+            }
+
+            .header-left {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .header-left .site-title {
+                font-size: 1.2rem;
+            }
+
+            .menu-toggle {
+                font-size: 1.2rem;
+                padding: 0.1rem 0.3rem;
+            }
+
+            /* Hide header buttons on mobile */
+            .header-right {
+                display: none;
+            }
+
+            /* ===== PAGE CONTENT ===== */
+            .page-content {
+                padding: 1.2rem 1rem;
+            }
+
+            .events-hero {
+                padding: 2.5rem 1.5rem;
+                min-height: 280px;
+            }
+
+            .events-hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-filter-bar {
+                flex-direction: column;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 0.5rem;
+            }
+
+            .search-filter-bar input {
+                border-radius: 40px;
+                width: 100%;
+            }
+
+            .search-filter-bar .search-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .filter-btn {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+
+            .footer-newsletter {
+                padding: 1.5rem 1.2rem;
+            }
+            .footer-newsletter .newsletter-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-newsletter .newsletter-form {
+                width: 100%;
+                flex-direction: column;
+            }
+            .footer-newsletter .newsletter-form input {
+                width: 100%;
+                min-width: auto;
+            }
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem 1.2rem;
+            }
+            .footer-bottom {
+                padding: 1rem 1.2rem;
+            }
+            .footer-bottom .bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .events-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .modal-box {
+                padding: 1.5rem;
+                max-width: 95%;
+            }
+        }
+
+        /* Small Mobile (≤ 480px) */
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.3rem 0.5rem;
+            }
+
+            .header-left .site-title {
+                font-size: 0.9rem;
+            }
+
+            .header-left .site-title i {
+                margin-right: 3px;
+            }
+
+            .menu-toggle {
+                font-size: 0.9rem;
+                padding: 0.1rem 0.15rem;
+            }
+
+            .events-hero {
+                padding: 2rem 1rem;
+                min-height: 220px;
+            }
+
+            .events-hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .events-hero p {
+                font-size: 0.9rem;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            .event-card .event-image {
+                height: 120px;
+            }
+            .event-card .event-info h4 {
+                font-size: 0.8rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .footer-newsletter {
+                padding: 1.2rem 1rem;
+            }
+            .footer-main {
+                padding: 1.2rem 1rem;
+            }
+            .footer-bottom {
+                padding: 0.8rem 1rem;
+            }
+            .footer-bottom .bottom-links {
+                justify-content: center;
+            }
+            .modal-box {
+                padding: 1rem;
+            }
+            .modal-box h2 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Bookkaru</span>
+        </div>
+        <nav>
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="#"><i class="fas fa-info-circle"></i> About</a>
+            <a href="#"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="#" class="active"><i class="fas fa-calendar-check"></i> Events</a>
+            <a href="whychooseus.html"><i class="fas fa-star"></i> Why choose us</a>
+        </nav>
+
+        <!-- Sidebar Auth Buttons (Mobile Only) -->
+        <div class="sidebar-auth">
+            <a href="register.html" class="auth-btn register-btn"><i class="fas fa-handshake"></i> Become a partner</a>
+            <a href="signin.html" class="auth-btn signin-btn"><i class="fas fa-sign-in-alt"></i> Sign in</a>
+            <a href="signup.html" class="auth-btn signup-btn"><i class="fas fa-user-plus"></i> Sign up</a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="site-title"><i class="fas fa-ticket-alt"></i> Bookkaru</div>
+            </div>
+            <div class="header-right">
+                <a href="register.html" class="btn btn-register" style="text-decoration: none;">Become a partner</a>
+                <a href="signin.html" class="btn btn-signin" style="text-decoration: none;">Sign in</a>
+                <a href="signup.html" class="btn btn-signup" style="text-decoration: none;">Sign up</a>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- ===== EVENTS HERO WITH BACKGROUND IMAGE ===== -->
+            <div class="events-hero">
+                <div class="hero-content">
+                    <h1>EXPERIENCE THE EXTRAORDINARY</h1>
+                    <p>BOOK YOUR EVENTS TICKETS FOR UNFORGETTABLE MOMENTS NOW</p>
+                    <div class="search-filter-bar">
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-filter="all" data-target="allEventsSection">All</button>
+                            <button class="filter-btn" data-filter="event" data-target="topEventsSection">Events</button>
+                            <button class="filter-btn" data-filter="course" data-target="topCoursesSection">Courses</button>
+                            <button class="filter-btn" data-filter="session" data-target="topSessionsSection">Sessions</button>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="Search events...">
+                        <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> SEARCH</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== EVENTS CONTAINER ===== -->
+            <div class="events-container">
+
+                <!-- ===== TOP EVENTS ===== -->
+                <div class="section-title" id="topEventsSection"><i class="fas fa-star"></i> Top Events</div>
+                <div class="events-grid" id="topEventsGrid"></div>
+
+                <!-- ===== TOP COURSES ===== -->
+                <div class="section-title" id="topCoursesSection"><i class="fas fa-graduation-cap"></i> Top Courses</div>
+                <div class="events-grid" id="topCoursesGrid"></div>
+
+                <!-- ===== TOP SESSIONS ===== -->
+                <div class="section-title" id="topSessionsSection"><i class="fas fa-users"></i> Top Sessions</div>
+                <div class="events-grid" id="topSessionsGrid"></div>
+
+                <!-- ===== ALL EVENTS GRID ===== -->
+                <div class="section-title" id="allEventsSection"><i class="fas fa-calendar-alt"></i> All Events</div>
+                <div class="events-grid" id="allEventsGrid"></div>
+            </div>
+
+            <!-- ===== FOOTER ===== -->
+            <footer class="footer">
+                <div class="footer-newsletter">
+                    <div class="newsletter-content">
+                        <div class="newsletter-text">
+                            <h3><i class="fas fa-envelope"></i> SUBSCRIBE TO NEWSLETTER</h3>
+                            <p>Stay up to date with the latest news, announcements and articles.</p>
+                        </div>
+                        <div class="newsletter-form">
+                            <input type="email" placeholder="Enter your Email here">
+                            <button class="subscribe-btn">SUBSCRIBE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-main">
+                    <div>
+                        <div class="brand-footer">
+                            <i class="fas fa-ticket-alt"></i> BOOKKARU
+                        </div>
+                        <p>Purchasing a bus or flight ticket has never been simple. It always proved time-consuming, whether you had to drive to a bus terminal, visit a travel agency, or wait in long queues.</p>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-link"></i> USEFUL LINKS</h3>
+                        <ul class="footer-links">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="#">Terms &amp; Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Booking Terms &amp; Conditions</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-concierge-bell"></i> SERVICES</h3>
+                        <ul class="footer-links">
+                            <li><a href="index.html">Bus</a></li>
+                            <li><a href="index.html">Flight</a></li>
+                            <li><a href="index.html">Car</a></li>
+                            <li><a href="cinema.html">Cinema</a></li>
+                            <li><a href="events.html">Events</a></li>
+                            <li><a href="index.html">Attractions</a></li>
+                            <li><a href="index.html">Tours</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-mobile-alt"></i> GET THE APP</h3>
+                        <div class="app-buttons">
+                            <a href="#"><i class="fab fa-google-play"></i> Google Play</a>
+                            <a href="#"><i class="fab fa-apple"></i> App Store</a>
+                        </div>
+                        <h3 style="margin-top: 1.5rem;"><i class="fas fa-share-alt"></i> KEEP IN TOUCH</h3>
+                        <div class="social-icons">
+                            <a href="#"><i class="fab fa-facebook"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <div class="bottom-content">
+                        <p>Copyright © 2026 Bookkaru.com | All Rights Reserved</p>
+                        <div class="bottom-links">
+                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Booking Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ===== BOOKING MODAL ===== -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-box">
+            <h2 id="modalEventTitle">Event Title</h2>
+            <div class="event-sub" id="modalEventSub">Venue · City</div>
+
+            <div class="form-group">
+                <label><i class="fas fa-ticket-alt"></i> Number of Tickets</label>
+                <div style="display: flex; gap: 0.8rem;">
+                    <select id="ticketMale" style="flex: 1; padding: 0.45rem 0.7rem; border: 2px solid #f0d6d0; border-radius: 10px; font-size: 0.85rem; background: #fcf8f6;">
+                        <option value="0">0 Male</option>
+                        <option value="1">1 Male</option>
+                        <option value="2">2 Male</option>
+                        <option value="3">3 Male</option>
+                        <option value="4">4 Male</option>
+                        <option value="5">5 Male</option>
+                        <option value="6">6 Male</option>
+                        <option value="7">7 Male</option>
+                        <option value="8">8 Male</option>
+                        <option value="9">9 Male</option>
+                        <option value="10">10 Male</option>
+                    </select>
+                    <select id="ticketFemale" style="flex: 1; padding: 0.45rem 0.7rem; border: 2px solid #f0d6d0; border-radius: 10px; font-size: 0.85rem; background: #fcf8f6;">
+                        <option value="0">0 Female</option>
+                        <option value="1">1 Female</option>
+                        <option value="2">2 Female</option>
+                        <option value="3">3 Female</option>
+                        <option value="4">4 Female</option>
+                        <option value="5">5 Female</option>
+                        <option value="6">6 Female</option>
+                        <option value="7">7 Female</option>
+                        <option value="8">8 Female</option>
+                        <option value="9">9 Female</option>
+                        <option value="10">10 Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="phoneNumber" placeholder="03XX-XXXXXXX" maxlength="11">
+                <div class="error-msg" id="phoneError" style="color: #dc3545; font-size: 0.7rem; margin-top: 0.25rem; display: none;">⚠️ Please enter a valid Pakistani phone number (11 digits, starts with 03).</div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-continue" id="continueBooking"><i class="fas fa-check"></i> Book Now</button>
+                <button class="btn-cancel" id="cancelBooking"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.setAttribute('min', today);
+            });
+
+            // Sidebar toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+            }
+
+            menuToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            document.querySelectorAll('.sidebar nav a, .sidebar-auth .auth-btn').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // ===== EVENTS DATA =====
+            const eventsData = [
+                // Events
+                { 
+                    id: 1,
+                    title: "PSL Final 2026", 
+                    image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&h=400&fit=crop", 
+                    venue: "Gaddafi Stadium", 
+                    city: "Lahore", 
+                    date: "August 15, 2026", 
+                    time: "08:00 PM",
+                    price: "5000",
+                    category: "event",
+                    top: true
+                },
+                { 
+                    id: 2,
+                    title: "Coke Studio Live 2026", 
+                    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=600&h=400&fit=crop", 
+                    venue: "Expo Center", 
+                    city: "Karachi", 
+                    date: "August 20, 2026", 
+                    time: "07:00 PM",
+                    price: "2000",
+                    category: "event",
+                    top: true
+                },
+                { 
+                    id: 3,
+                    title: "Islamabad Food Fest 2026", 
+                    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop", 
+                    venue: "F-9 Park", 
+                    city: "Islamabad", 
+                    date: "August 25, 2026", 
+                    time: "12:00 PM",
+                    price: "1000",
+                    category: "event",
+                    top: true
+                },
+                { 
+                    id: 4,
+                    title: "Karachi Lit Fest 2026", 
+                    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&h=400&fit=crop", 
+                    venue: "Beach Luxury Hotel", 
+                    city: "Karachi", 
+                    date: "September 1, 2026", 
+                    time: "10:00 AM",
+                    price: "1500",
+                    category: "event"
+                },
+                // Courses
+                { 
+                    id: 5,
+                    title: "Digital Marketing Course 2026", 
+                    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop", 
+                    venue: "Tech Hub", 
+                    city: "Lahore", 
+                    date: "August 18, 2026", 
+                    time: "09:00 AM",
+                    price: "8000",
+                    category: "course",
+                    top: true
+                },
+                { 
+                    id: 6,
+                    title: "AI & ML Bootcamp 2026", 
+                    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=400&fit=crop", 
+                    venue: "NUST", 
+                    city: "Islamabad", 
+                    date: "September 5, 2026", 
+                    time: "10:00 AM",
+                    price: "12000",
+                    category: "course",
+                    top: true
+                },
+                { 
+                    id: 7,
+                    title: "Web Development Course 2026", 
+                    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop", 
+                    venue: "Tech Hub", 
+                    city: "Lahore", 
+                    date: "September 10, 2026", 
+                    time: "02:00 PM",
+                    price: "6000",
+                    category: "course"
+                },
+                // Sessions
+                { 
+                    id: 8,
+                    title: "Yoga & Wellness Session", 
+                    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop", 
+                    venue: "Community Center", 
+                    city: "Lahore", 
+                    date: "August 12, 2026", 
+                    time: "06:00 AM",
+                    price: "500",
+                    category: "session",
+                    top: true
+                },
+                { 
+                    id: 9,
+                    title: "Leadership Workshop 2026", 
+                    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&h=400&fit=crop", 
+                    venue: "Business Hub", 
+                    city: "Faisalabad", 
+                    date: "August 22, 2026", 
+                    time: "11:00 AM",
+                    price: "2000",
+                    category: "session",
+                    top: true
+                },
+                { 
+                    id: 10,
+                    title: "Public Speaking Session 2026", 
+                    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop", 
+                    venue: "Community Center", 
+                    city: "Islamabad", 
+                    date: "August 28, 2026", 
+                    time: "03:00 PM",
+                    price: "1000",
+                    category: "session"
+                }
+            ];
+
+            // ===== REFERENCES =====
+            const topEventsGrid = document.getElementById('topEventsGrid');
+            const topCoursesGrid = document.getElementById('topCoursesGrid');
+            const topSessionsGrid = document.getElementById('topSessionsGrid');
+            const allEventsGrid = document.getElementById('allEventsGrid');
+
+            const modal = document.getElementById('bookingModal');
+            const modalTitle = document.getElementById('modalEventTitle');
+            const modalSub = document.getElementById('modalEventSub');
+            const ticketMale = document.getElementById('ticketMale');
+            const ticketFemale = document.getElementById('ticketFemale');
+            const phoneNumber = document.getElementById('phoneNumber');
+            const phoneError = document.getElementById('phoneError');
+            const continueBtn = document.getElementById('continueBooking');
+            const cancelBtn = document.getElementById('cancelBooking');
+
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            let currentFilter = 'all';
+            let searchQuery = '';
+
+            // ===== PHONE VALIDATION FUNCTION =====
+            function validatePhone() {
+                const value = phoneNumber.value.replace(/\D/g, '');
+                const phoneRegex = /^03\d{9}$/;
+                
+                if (value && !phoneRegex.test(value)) {
+                    phoneNumber.style.borderColor = '#dc3545';
+                    phoneNumber.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.12)';
+                    phoneError.style.display = 'block';
+                    return false;
+                } else if (value && phoneRegex.test(value)) {
+                    phoneNumber.style.borderColor = '#28a745';
+                    phoneNumber.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.08)';
+                    phoneError.style.display = 'none';
+                    return true;
+                } else {
+                    phoneNumber.style.borderColor = '#f0d6d0';
+                    phoneNumber.style.boxShadow = 'none';
+                    phoneError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // Real-time phone validation
+            phoneNumber.addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+                this.value = value;
+                validatePhone();
+            });
+
+            // ===== HELPER FUNCTIONS =====
+            function createEventCardHTML(event, showBadge = true) {
+                const badgeClass = event.category;
+                const badgeLabel = event.category.charAt(0).toUpperCase() + event.category.slice(1);
+                return `
+                    <div class="event-card" data-id="${event.id}">
+                        <img class="event-image" src="${event.image}" alt="${event.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Event+Image'">
+                        <div class="event-info">
+                            ${showBadge ? `<span class="event-badge ${badgeClass}">${badgeLabel}</span>` : ''}
+                            <h4>${event.title}</h4>
+                            <div class="event-detail"><i class="fas fa-map-marker-alt"></i> ${event.venue}, ${event.city}</div>
+                            <div class="event-date"><i class="fas fa-calendar-alt"></i> ${event.date} at ${event.time}</div>
+                            <div class="event-price">From <span>PKR ${event.price}</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderGrid(container, data, showBadge = true) {
+                container.innerHTML = '';
+                
+                if (data.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column:1/-1; text-align:center; padding:1.5rem; color:#6b4f3e;">
+                            <i class="fas fa-calendar-times" style="font-size:2rem; color:#e63946; margin-bottom:0.5rem;"></i>
+                            <h3>No items found</h3>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                data.forEach(event => {
+                    const card = document.createElement('div');
+                    card.className = 'event-card';
+                    card.dataset.id = event.id;
+                    card.innerHTML = createEventCardHTML(event, showBadge);
+                    card.addEventListener('click', function() {
+                        openModal(event.id);
+                    });
+                    container.appendChild(card);
+                });
+            }
+
+            // ===== SCROLL TO SECTION =====
+            function scrollToSection(sectionId) {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const offset = 80;
+                    const top = section.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top: top, behavior: 'smooth' });
+                }
+            }
+
+            // ===== FILTER EVENTS =====
+            function filterEvents() {
+                let filtered = [...eventsData];
+
+                if (currentFilter !== 'all') {
+                    filtered = filtered.filter(e => e.category === currentFilter);
+                }
+
+                if (searchQuery.trim()) {
+                    const query = searchQuery.toLowerCase().trim();
+                    filtered = filtered.filter(e => 
+                        e.title.toLowerCase().includes(query) || 
+                        e.venue.toLowerCase().includes(query) || 
+                        e.city.toLowerCase().includes(query)
+                    );
+                }
+
+                return filtered;
+            }
+
+            // ===== RENDER ALL =====
+            function renderAll() {
+                const topEvents = eventsData.filter(e => e.category === 'event' && e.top === true);
+                const topCourses = eventsData.filter(e => e.category === 'course' && e.top === true);
+                const topSessions = eventsData.filter(e => e.category === 'session' && e.top === true);
+
+                renderGrid(topEventsGrid, topEvents);
+                renderGrid(topCoursesGrid, topCourses);
+                renderGrid(topSessionsGrid, topSessions);
+
+                const filtered = filterEvents();
+                renderGrid(allEventsGrid, filtered);
+            }
+
+            // ===== OPEN MODAL =====
+            function openModal(id) {
+                const event = eventsData.find(e => e.id === id);
+                if (!event) return;
+
+                modalTitle.textContent = event.title;
+                modalSub.textContent = `${event.venue} · ${event.city}`;
+                
+                ticketMale.value = '0';
+                ticketFemale.value = '0';
+                phoneNumber.value = '';
+                phoneNumber.style.borderColor = '#f0d6d0';
+                phoneNumber.style.boxShadow = 'none';
+                phoneError.style.display = 'none';
+                
+                modal.dataset.eventId = event.id;
+                modal.dataset.eventPrice = event.price;
+                modal.classList.add('active');
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+            }
+
+            // ===== EVENT LISTENERS =====
+            document.querySelectorAll('.filter-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    
+                    const targetId = this.dataset.target;
+                    if (targetId) {
+                        scrollToSection(targetId);
+                    }
+                    
+                    renderAll();
+                });
+            });
+
+            searchBtn.addEventListener('click', function() {
+                searchQuery = searchInput.value;
+                renderAll();
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchQuery = this.value;
+                    renderAll();
+                }
+            });
+
+            // ===== MODAL BUTTONS WITH PHONE VALIDATION =====
+            continueBtn.addEventListener('click', function() {
+                const event = eventsData.find(e => e.id === parseInt(modal.dataset.eventId));
+                if (!event) {
+                    alert('⚠️ Event not found.');
+                    return;
+                }
+
+                const male = parseInt(ticketMale.value) || 0;
+                const female = parseInt(ticketFemale.value) || 0;
+                const totalTickets = male + female;
+                const phone = phoneNumber.value || '';
+
+                if (!phone) {
+                    alert('⚠️ Please enter your phone number.');
+                    phoneNumber.focus();
+                    return;
+                }
+
+                const phoneRegex = /^03\d{9}$/;
+                if (!phoneRegex.test(phone)) {
+                    alert('⚠️ Please enter a valid Pakistani phone number (11 digits, starts with 03).');
+                    phoneNumber.style.borderColor = '#dc3545';
+                    phoneNumber.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.12)';
+                    phoneError.style.display = 'block';
+                    phoneNumber.focus();
+                    return;
+                }
+
+                if (totalTickets === 0) {
+                    alert('⚠️ Please select at least 1 ticket.');
+                    return;
+                }
+
+                const total = parseInt(event.price) * totalTickets;
+                alert(
+                    `✅ Booking Confirmed!\n\n` +
+                    `Event: ${event.title}\n` +
+                    `Venue: ${event.venue} (${event.city})\n` +
+                    `Tickets: ${totalTickets} (${male} Male, ${female} Female)\n` +
+                    `Phone: ${phone}\n` +
+                    `Total Price: PKR ${total}\n\n` +
+                    `Thank you for choosing Bookkaru!`
+                );
+                closeModal();
+            });
+
+            cancelBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            // Newsletter
+            document.querySelector('.subscribe-btn').addEventListener('click', function() {
+                const email = document.querySelector('.newsletter-form input').value;
+                if (!email) {
+                    alert('⚠️ Please enter your email address.');
+                    return;
+                }
+                if (!email.includes('@') || !email.includes('.')) {
+                    alert('⚠️ Please enter a valid email address.');
+                    return;
+                }
+                alert('✅ Thank you for subscribing to our newsletter!');
+                document.querySelector('.newsletter-form input').value = '';
+            });
+
+            // ===== INITIALIZE =====
+            renderAll();
+
+        })();
+    </script>
+</body>
+</html>

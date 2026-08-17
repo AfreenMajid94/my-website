@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookkaru · Tours</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* --- (Your existing styles remain unchanged) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f8f4f2;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            color: #2c1810;
+            padding: 1.5rem 1rem 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 16px rgba(180, 40, 20, 0.08);
+            position: fixed;
+            top: 0;
+            left: -280px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            border-right: 2px solid #e63946;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2rem;
+            color: #2c1810;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 0.8rem;
+        }
+
+        .sidebar .brand i {
+            color: #e63946;
+            font-size: 1.4rem;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex: 1;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .sidebar nav a i {
+            display: inline-block;
+            width: 1.2rem;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        .sidebar nav a:hover {
+            background: #fce8e5;
+            color: #000000;
+            transform: translateX(4px);
+        }
+
+        .sidebar nav a.active {
+            background: #e63946;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
+        }
+
+        .sidebar nav a.active i {
+            color: #ffffff;
+        }
+
+        /* ----- Sidebar Auth Buttons (Mobile only) ----- */
+        .sidebar-auth {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #f0d6d0;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-auth .auth-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            color: #000000;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .sidebar-auth .auth-btn i {
+            width: 1.2rem;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        .sidebar-auth .auth-btn:hover {
+            background: #fce8e5;
+            color: #000000;
+            transform: translateX(4px);
+        }
+
+        .sidebar-auth .auth-btn.register-btn {
+            background: #e63946;
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.register-btn i {
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.register-btn:hover {
+            background: #c62828;
+        }
+
+        .sidebar-auth .auth-btn.signin-btn {
+            border: 2px solid #e63946;
+        }
+
+        .sidebar-auth .auth-btn.signin-btn:hover {
+            background: #fce8e5;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn {
+            background: #e63946;
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn i {
+            color: #ffffff;
+        }
+
+        .sidebar-auth .auth-btn.signup-btn:hover {
+            background: #c62828;
+        }
+
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: #2c1810;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            display: block;
+        }
+
+        .menu-toggle:hover {
+            color: #e63946;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            transition: 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f4f2;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ---------- HEADER ---------- */
+        .header {
+            background: #ffffff;
+            padding: 0.6rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e63946;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .header-left .site-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c1810;
+        }
+
+        .header-left .site-title i {
+            color: #e63946;
+            margin-right: 6px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .header-right .btn {
+            padding: 0.35rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: transparent;
+            color: #2c1810;
+        }
+
+        .header-right .btn-register {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-register:hover {
+            background: #c62828;
+        }
+
+        .header-right .btn-signin {
+            background: #ffffff;
+            color: #2c1810;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-signin:hover {
+            background: #fce8e5;
+        }
+
+        .header-right .btn-signup {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .header-right .btn-signup:hover {
+            background: #c62828;
+        }
+
+        /* ---------- PAGE CONTENT ---------- */
+        .page-content {
+            padding: 1.8rem 2.5rem 1.8rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---------- TOURS HERO ---------- */
+        .tours-hero {
+            background-image: url('https://www.wildfrontierstravel.com/media/cache/gallery_image/upload/mirror/dhruv-wildfrontierstravel-com/2cac85df_dreamstimem167672027.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 24px;
+            padding: 4rem 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #ffffff;
+            border: 2px solid #e63946;
+            box-shadow: 0 8px 24px rgba(230, 57, 70, 0.2);
+            position: relative;
+            overflow: hidden;
+            min-height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tours-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 22px;
+            z-index: 0;
+        }
+
+        .tours-hero .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .tours-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tours-hero h1 i {
+            margin-right: 12px;
+        }
+
+        .tours-hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Search Bar */
+        .search-bar-tours {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            max-width: 650px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-bar-tours select {
+            flex: 1;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            min-width: 150px;
+            outline: none;
+            color: #2c1810;
+            cursor: pointer;
+        }
+
+        .search-bar-tours select option {
+            color: #2c1810;
+        }
+
+        .search-bar-tours .search-btn {
+            padding: 0.7rem 2rem;
+            background: #ffffff;
+            color: #e63946;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .search-bar-tours .search-btn:hover {
+            background: #fce8e5;
+            transform: scale(1.02);
+        }
+
+        /* ---------- SECTION TITLE ---------- */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #e63946;
+        }
+
+        /* ---------- TOURS GRID ---------- */
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tour-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 2px solid #f0d6d0;
+            transition: 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tour-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(230, 57, 70, 0.12);
+            border-color: #e63946;
+        }
+
+        .tour-card .tour-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .tour-card .tour-info {
+            padding: 1rem 1rem 0.8rem;
+        }
+
+        .tour-card .tour-info .tour-badge {
+            display: inline-block;
+            padding: 0.15rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #e63946;
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+
+        .tour-card .tour-info h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+        }
+
+        .tour-card .tour-info .tour-detail {
+            font-size: 0.8rem;
+            color: #6b4f3e;
+            margin-bottom: 0.2rem;
+        }
+
+        .tour-card .tour-info .tour-detail i {
+            color: #e63946;
+            width: 18px;
+        }
+
+        .tour-card .tour-info .tour-price {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-top: 0.3rem;
+        }
+
+        .tour-card .tour-info .tour-price span {
+            color: #e63946;
+        }
+
+        /* ---------- TOUR INFO SECTION (BOTTOM) ---------- */
+        .tour-info-section {
+            margin-top: 2.5rem;
+            padding: 2.5rem 0 1rem;
+            border-top: 2px solid #f0d6d0;
+        }
+
+        .tour-info-section .info-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .tour-info-section .info-text h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-bottom: 0.3rem;
+        }
+
+        .tour-info-section .info-text h2 i {
+            color: #e63946;
+            margin-right: 10px;
+        }
+
+        .tour-info-section .info-text .info-tag {
+            color: #e63946;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .tour-info-section .info-text p {
+            color: #3d2a1e;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-bottom: 0.8rem;
+        }
+
+        .tour-info-section .info-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .tour-info-section .info-image {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #f0d6d0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .tour-info-section .info-image img {
+            width: 100%;
+            height: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ---------- MODAL ---------- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 28px;
+            max-width: 480px;
+            width: 92%;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid #e63946;
+            animation: modalFade 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalFade {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-box h2 {
+            font-size: 1.4rem;
+            color: #2c1810;
+            margin-bottom: 0.2rem;
+        }
+
+        .modal-box .tour-sub {
+            color: #e63946;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .modal-box .form-group {
+            margin-bottom: 0.9rem;
+        }
+
+        .modal-box .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #2c1810;
+            margin-bottom: 0.2rem;
+        }
+
+        .modal-box .form-group select,
+        .modal-box .form-group input,
+        .modal-box .form-group textarea {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: #fcf8f6;
+        }
+
+        .modal-box .form-group select:focus,
+        .modal-box .form-group input:focus,
+        .modal-box .form-group textarea:focus {
+            border-color: #e63946;
+            outline: none;
+        }
+
+        .modal-box .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.7rem;
+            margin-top: 1.2rem;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .modal-actions .btn-continue {
+            background: #e63946;
+            color: #fff;
+        }
+
+        .modal-actions .btn-continue:hover {
+            background: #c62828;
+        }
+
+        .modal-actions .btn-cancel {
+            background: #f0d6d0;
+            color: #2c1810;
+        }
+
+        .modal-actions .btn-cancel:hover {
+            background: #dbb8b0;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 0;
+            margin-top: 1.8rem;
+            border-top: 3px solid #e63946;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        .footer-newsletter {
+            background: #1a1a1a;
+            padding: 2.5rem 2.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-newsletter .newsletter-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .footer-newsletter .newsletter-text h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .footer-newsletter .newsletter-text h3 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-newsletter .newsletter-text p {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            margin-top: 0.2rem;
+        }
+
+        .footer-newsletter .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-newsletter .newsletter-form input {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.2s;
+            min-width: 220px;
+        }
+
+        .footer-newsletter .newsletter-form input::placeholder {
+            color: #888888;
+        }
+
+        .footer-newsletter .newsletter-form input:focus {
+            border-color: #e63946;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-newsletter .newsletter-form .subscribe-btn {
+            padding: 0.6rem 1.8rem;
+            background: #e63946;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .footer-newsletter .newsletter-form .subscribe-btn:hover {
+            background: #c62828;
+            transform: scale(1.02);
+        }
+
+        .footer-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2.5rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+            gap: 2rem;
+        }
+
+        .footer-main .brand-footer {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-main .brand-footer i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-main p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-main h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-main h3 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .footer-main .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-main .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-main .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .footer-main .footer-links a:hover {
+            color: #e63946;
+            padding-left: 4px;
+        }
+
+        .footer-main .app-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-main .app-buttons a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-main .app-buttons a:hover {
+            background: rgba(230, 57, 70, 0.3);
+            border-color: #e63946;
+        }
+
+        .footer-main .app-buttons a i {
+            font-size: 1.2rem;
+            color: #e63946;
+        }
+
+        .footer-main .social-icons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-main .social-icons a {
+            color: #cccccc;
+            font-size: 1.3rem;
+            transition: 0.2s;
+        }
+
+        .footer-main .social-icons a:hover {
+            color: #e63946;
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem 2.5rem;
+            background: #1a1a1a;
+        }
+
+        .footer-bottom .bottom-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .footer-bottom p {
+            font-size: 0.8rem;
+            color: #888888;
+            margin: 0;
+        }
+
+        .footer-bottom .bottom-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-bottom .bottom-links a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+
+        .footer-bottom .bottom-links a:hover {
+            color: #e63946;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 1024px) {
+            .footer-main {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tours-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            .tour-info-section .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .tour-info-section .info-image {
+                max-width: 100%;
+            }
+            .tour-info-section .info-image img {
+                max-height: 220px;
+            }
+        }
+
+        /* ================================================================ */
+        /* ===== MOBILE RESPONSIVE - UPDATED ===== */
+        /* ================================================================ */
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 280px;
+                left: -300px;
+            }
+
+            /* ===== SIDEBAR AUTH BUTTONS VISIBLE ON MOBILE ===== */
+            .sidebar-auth {
+                display: flex;
+            }
+
+            /* ===== HEADER - Remove buttons, only logo + menu ===== */
+            .header {
+                padding: 0.5rem 1rem;
+                gap: 0.3rem;
+            }
+
+            .header-left {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .header-left .site-title {
+                font-size: 1.2rem;
+            }
+
+            .menu-toggle {
+                font-size: 1.2rem;
+                padding: 0.1rem 0.3rem;
+            }
+
+            /* Hide header buttons on mobile */
+            .header-right {
+                display: none;
+            }
+
+            /* ===== PAGE CONTENT ===== */
+            .page-content {
+                padding: 1.2rem 1rem;
+            }
+
+            .tours-hero {
+                padding: 2.5rem 1.5rem;
+                min-height: 300px;
+            }
+
+            .tours-hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .search-bar-tours {
+                flex-direction: column;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .search-bar-tours select {
+                border-radius: 40px;
+            }
+
+            .search-bar-tours .search-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tour-info-section .info-text h2 {
+                font-size: 1.4rem;
+            }
+            .tour-info-section .info-text p {
+                font-size: 0.85rem;
+            }
+
+            .footer-newsletter {
+                padding: 1.5rem 1.2rem;
+            }
+            .footer-newsletter .newsletter-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-newsletter .newsletter-form {
+                width: 100%;
+                flex-direction: column;
+            }
+            .footer-newsletter .newsletter-form input {
+                width: 100%;
+                min-width: auto;
+            }
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem 1.2rem;
+            }
+            .footer-bottom {
+                padding: 1rem 1.2rem;
+            }
+            .footer-bottom .bottom-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .tours-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .modal-box {
+                padding: 1.5rem;
+                max-width: 95%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 0.3rem 0.5rem;
+            }
+
+            .header-left .site-title {
+                font-size: 0.9rem;
+            }
+
+            .header-left .site-title i {
+                margin-right: 3px;
+            }
+
+            .menu-toggle {
+                font-size: 0.9rem;
+                padding: 0.1rem 0.15rem;
+            }
+
+            .tours-hero {
+                padding: 2rem 1rem;
+                min-height: 250px;
+            }
+
+            .tours-hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .tours-hero p {
+                font-size: 0.9rem;
+            }
+
+            .tours-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            .tour-card .tour-image {
+                height: 150px;
+            }
+            .tour-card .tour-info h3 {
+                font-size: 0.85rem;
+            }
+            .tour-card .tour-info .tour-detail {
+                font-size: 0.7rem;
+            }
+            .tour-card .tour-info .tour-price {
+                font-size: 0.75rem;
+            }
+
+            .tour-info-section {
+                padding: 1.5rem 0 0.5rem;
+            }
+            .tour-info-section .info-text h2 {
+                font-size: 1.2rem;
+            }
+            .tour-info-section .info-text p {
+                font-size: 0.8rem;
+            }
+
+            .footer-newsletter {
+                padding: 1.2rem 1rem;
+            }
+            .footer-main {
+                padding: 1.2rem 1rem;
+            }
+            .footer-bottom {
+                padding: 0.8rem 1rem;
+            }
+            .footer-bottom .bottom-links {
+                justify-content: center;
+            }
+            .modal-box {
+                padding: 1rem;
+            }
+            .modal-box h2 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .tours-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* New error message style for phone validation */
+        .error-msg {
+            color: #dc3545;
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Bookkaru</span>
+        </div>
+        <nav>
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="#"><i class="fas fa-info-circle"></i> About</a>
+            <a href="#"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="#" class="active"><i class="fas fa-umbrella-beach"></i> Tours</a>
+            <a href="whychooseus.html"><i class="fas fa-star"></i> Why choose us</a>
+        </nav>
+
+        <!-- Sidebar Auth Buttons (Mobile Only) -->
+        <div class="sidebar-auth">
+            <a href="register.html" class="auth-btn register-btn"><i class="fas fa-handshake"></i> Become a partner</a>
+            <a href="signin.html" class="auth-btn signin-btn"><i class="fas fa-sign-in-alt"></i> Sign in</a>
+            <a href="signup.html" class="auth-btn signup-btn"><i class="fas fa-user-plus"></i> Sign up</a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="site-title"><i class="fas fa-ticket-alt"></i> Bookkaru</div>
+            </div>
+            <div class="header-right">
+                <a href="register.html" class="btn btn-register" style="text-decoration: none;">Become a partner</a>
+                <a href="signin.html" class="btn btn-signin" style="text-decoration: none;">Sign in</a>
+                <a href="signup.html" class="btn btn-signup" style="text-decoration: none;">Sign up</a>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+            <!-- ===== TOURS HERO ===== -->
+            <div class="tours-hero">
+                <div class="hero-content">
+                    <h1>Explore the beauty of Pakistan</h1>
+                    <div class="search-bar-tours">
+                        <select id="locationSelect">
+                            <option value="all">All Destinations</option>
+                            <option value="Gilgit">Gilgit, Hunza, Skardu</option>
+                            <option value="Naran">Naran / Kagan Valley</option>
+                            <option value="Neelam">Neelam Valley</option>
+                            <option value="Rawalakot">Rawalakot Valley</option>
+                            <option value="Swat">Swat Valley, Chitral Valley</option>
+                            <option value="Kumrat">Kumrat Valley</option>
+                        </select>
+                        <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> EXPLORE</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TOP TOURS ===== -->
+            <div class="section-title"><i class="fas fa-star"></i> TOP TOURS</div>
+            <div class="tours-grid" id="toursGrid">
+                <!-- Tours loaded by JavaScript -->
+            </div>
+
+            <!-- ===== TOUR INFO SECTION (BOTTOM) ===== -->
+            <div class="tour-info-section">
+                <div class="info-grid">
+                    <div class="info-text">
+                        <h2><i class="fas fa-umbrella-beach"></i> Online Tour Booking</h2>
+                        <p>Ready for an adventure? Bookkaru's online tour booking service makes exploring Pakistan's most stunning destinations a breeze. From vibrant city tours to serene nature escapes, our curated tours offer something for every traveler. Secure your spot online and prepare to embark on a journey of discovery and excitement. Bookkaru is here to guide your next big adventure with ease.</p>
+                        <p><strong>Convenient Tour Booking for Pakistan's Best Destinations</strong><br>
+                        At Bookkaru, planning your next trip is simple with our online tour booking platform. Explore a range of curated tours that showcase Pakistan's top destinations, from bustling cities to breathtaking landscapes. Our easy-to-use service allows you to book your tour online, ensuring a smooth and hassle-free travel experience. Discover the best of Pakistan with just a few clicks.</p>
+                        <p><strong>Advantages of Booking Tours Online</strong><br>
+                        Why wait to book your next adventure when you can enjoy the benefits of online tour booking? Bookkaru offers a streamlined process to secure tours for Pakistan's most exciting locations. Enjoy the convenience of booking your travel experiences ahead of time and make the most out of your journey with our expertly curated packages. Let Bookkaru help you explore and experience Pakistan like never before.</p>
+                    </div>
+                    <div class="info-image">
+                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=400&fit=crop" alt="Tour booking">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== FOOTER ===== -->
+            <footer class="footer">
+                <div class="footer-newsletter">
+                    <div class="newsletter-content">
+                        <div class="newsletter-text">
+                            <h3><i class="fas fa-envelope"></i> SUBSCRIBE TO NEWSLETTER</h3>
+                            <p>Stay up to date with the latest news, announcements and articles.</p>
+                        </div>
+                        <div class="newsletter-form">
+                            <input type="email" placeholder="Enter your Email here">
+                            <button class="subscribe-btn">SUBSCRIBE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-main">
+                    <div>
+                        <div class="brand-footer">
+                            <i class="fas fa-ticket-alt"></i> BOOKKARU
+                        </div>
+                        <p>Purchasing a bus or flight ticket has never been simple. It always proved time-consuming, whether you had to drive to a bus terminal, visit a travel agency, or wait in long queues.</p>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-link"></i> USEFUL LINKS</h3>
+                        <ul class="footer-links">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="#">Terms &amp; Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Booking Terms &amp; Conditions</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-concierge-bell"></i> SERVICES</h3>
+                        <ul class="footer-links">
+                            <li><a href="index.html">Bus</a></li>
+                            <li><a href="index.html">Flight</a></li>
+                            <li><a href="index.html">Car</a></li>
+                            <li><a href="cinema.html">Cinema</a></li>
+                            <li><a href="events.html">Events</a></li>
+                            <li><a href="attractions.html">Attractions</a></li>
+                            <li><a href="tours.html">Tours</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3><i class="fas fa-mobile-alt"></i> GET THE APP</h3>
+                        <div class="app-buttons">
+                            <a href="#"><i class="fab fa-google-play"></i> Google Play</a>
+                            <a href="#"><i class="fab fa-apple"></i> App Store</a>
+                        </div>
+                        <h3 style="margin-top: 1.5rem;"><i class="fas fa-share-alt"></i> KEEP IN TOUCH</h3>
+                        <div class="social-icons">
+                            <a href="#"><i class="fab fa-facebook"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <div class="bottom-content">
+                        <p>Copyright © 2026 Bookkaru.com | All Rights Reserved</p>
+                        <div class="bottom-links">
+                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Booking Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ===== BOOKING MODAL ===== -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-box">
+            <h2 id="modalTourTitle">Tour Title</h2>
+            <div class="tour-sub" id="modalTourSub">Destination</div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> Booking Date</label>
+                <input type="date" id="bookingDate" min="">
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-users"></i> Number of People</label>
+                <select id="peopleCount">
+                    <option value="1">1 Person</option>
+                    <option value="2">2 People</option>
+                    <option value="3">3 People</option>
+                    <option value="4">4 People</option>
+                    <option value="5">5 People</option>
+                    <option value="6">6 People</option>
+                    <option value="7">7 People</option>
+                    <option value="8">8 People</option>
+                    <option value="9">9 People</option>
+                    <option value="10">10 People</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-bed"></i> Accommodation Type</label>
+                <select id="accommodationType">
+                    <option value="Standard">Standard</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Luxury">Luxury</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="phoneNumber" placeholder="03XX-XXXXXXX" maxlength="11">
+                <div class="error-msg" id="phoneError">⚠️ Please enter a valid Pakistani phone number (11 digits, starts with 03).</div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-comment"></i> Special Requests</label>
+                <textarea id="specialRequests" placeholder="Any special requests or requirements..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-continue" id="continueBooking"><i class="fas fa-check"></i> Book Now</button>
+                <button class="btn-cancel" id="cancelBooking"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        (function() {
+            // Set min date to today for booking date
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.setAttribute('min', today);
+            });
+
+            // Sidebar toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+            }
+
+            menuToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            document.querySelectorAll('.sidebar nav a, .sidebar-auth .auth-btn').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+
+            // ===== TOURS DATA =====
+            const toursData = [
+                {
+                    id: 1,
+                    title: "3 DAYS TOUR Swat Kalam Malam Jabba",
+                    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0WT_RcyeYc5UuFeFvlPyZg69diw9fegfpXs-lD5r6Zz9L0lq2aog8qxY&s=10",
+                    destination: "Swat Valley, Chitral Valley",
+                    duration: "3 Days",
+                    price: "25000"
+                },
+                {
+                    id: 2,
+                    title: "8 DAYS TOUR Hunza & Skardu",
+                    image: "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/0a/35/37/9e.jpg",
+                    destination: "Gilgit, Hunza, Skardu",
+                    duration: "8 Days",
+                    price: "75000"
+                },
+                {
+                    id: 3,
+                    title: "3 DAYS TOUR Naran Shogran Siri Paye",
+                    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbW2dPA3_r86R2KRqNsYykiA5JI6bu1xk9vktUUMy5mvfObgQna_ubQuU&s=10",
+                    destination: "Naran / Kagan Valley",
+                    duration: "3 Days",
+                    price: "30000"
+                },
+                {
+                    id: 4,
+                    title: "4 DAYS TOUR Neelam Valley & Arang Kel",
+                    image: "https://www.saiyah.com.pk/wp-content/uploads/2025/12/Feature-Image-1024x558.jpeg",
+                    destination: "Neelam Valley",
+                    duration: "4 Days",
+                    price: "35000"
+                },
+                {
+                    id: 5,
+                    title: "3 DAYS TOUR Kumrat Valley",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Evening_shades.jpg/1280px-Evening_shades.jpg",
+                    destination: "Kumrat Valley",
+                    duration: "3 Days",
+                    price: "28000"
+                },
+                {
+                    id: 6,
+                    title: "5 DAYS TOUR Ratti Gali - Arang Kel",
+                    image: "https://seepakistantours.com/wp-content/uploads/2022/04/Ratti-Gali-Arang-Kel-6-Days-Tour.jpg",
+                    destination: "Neelam Valley",
+                    duration: "5 Days",
+                    price: "45000"
+                },
+                {
+                    id: 7,
+                    title: "4 DAYS TOUR Kumrat Jahaz Banda Katora Lake",
+                    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFZSPxizmuQcfQRyie7EqhW_TGM8XuOgtCsJJebRuc5LAQnLJUqVjYentS&s=10",
+                    destination: "Kumrat Valley",
+                    duration: "4 Days",
+                    price: "38000"
+                },
+                {
+                    id: 8,
+                    title: "3 DAYS TOUR Neelam Valley & Taobat",
+                    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUGds1K35C8pkPJzDq6-jmrgdjhM6yRKMQe-XL3sQtEDjpOgStKMxaTl0&s=10",
+                    destination: "Neelam Valley",
+                    duration: "3 Days",
+                    price: "32000"
+                }
+            ];
+
+            // ===== REFERENCES =====
+            const toursGrid = document.getElementById('toursGrid');
+            const locationSelect = document.getElementById('locationSelect');
+            const searchBtn = document.getElementById('searchBtn');
+            const modal = document.getElementById('bookingModal');
+            const modalTitle = document.getElementById('modalTourTitle');
+            const modalSub = document.getElementById('modalTourSub');
+            const bookingDate = document.getElementById('bookingDate');
+            const peopleCount = document.getElementById('peopleCount');
+            const accommodationType = document.getElementById('accommodationType');
+            const phoneNumber = document.getElementById('phoneNumber');
+            const phoneError = document.getElementById('phoneError');
+            const specialRequests = document.getElementById('specialRequests');
+            const continueBtn = document.getElementById('continueBooking');
+            const cancelBtn = document.getElementById('cancelBooking');
+
+            let currentLocation = 'all';
+
+            // ===== PHONE VALIDATION FUNCTION =====
+            function validatePhone() {
+                const value = phoneNumber.value.replace(/\D/g, '');
+                const phoneRegex = /^03\d{9}$/;
+                
+                if (value && !phoneRegex.test(value)) {
+                    phoneNumber.style.borderColor = '#dc3545';
+                    phoneNumber.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.12)';
+                    phoneError.style.display = 'block';
+                    return false;
+                } else if (value && phoneRegex.test(value)) {
+                    phoneNumber.style.borderColor = '#28a745';
+                    phoneNumber.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.08)';
+                    phoneError.style.display = 'none';
+                    return true;
+                } else {
+                    phoneNumber.style.borderColor = '#f0d6d0';
+                    phoneNumber.style.boxShadow = 'none';
+                    phoneError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // Real-time phone validation
+            phoneNumber.addEventListener('input', function(e) {
+                // Remove any non-digit characters
+                let value = this.value.replace(/\D/g, '');
+                // Limit to 11 digits
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+                this.value = value;
+                validatePhone();
+            });
+
+            // ===== RENDER TOURS =====
+            function renderTours() {
+                let filtered = [...toursData];
+
+                if (currentLocation !== 'all') {
+                    filtered = filtered.filter(t => t.destination.includes(currentLocation));
+                }
+
+                toursGrid.innerHTML = '';
+                if (filtered.length === 0) {
+                    toursGrid.innerHTML = `
+                        <div style="grid-column:1/-1; text-align:center; padding:2rem; color:#6b4f3e;">
+                            <i class="fas fa-umbrella-beach" style="font-size:2.5rem; color:#e63946; margin-bottom:0.5rem;"></i>
+                            <h3>No tours found</h3>
+                            <p>Try selecting a different destination</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                filtered.forEach(tour => {
+                    const card = document.createElement('div');
+                    card.className = 'tour-card';
+                    card.dataset.id = tour.id;
+                    card.innerHTML = `
+                        <img class="tour-image" src="${tour.image}" alt="${tour.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Tour+Image'">
+                        <div class="tour-info">
+                            <span class="tour-badge">${tour.duration}</span>
+                            <h3>${tour.title}</h3>
+                            <div class="tour-detail"><i class="fas fa-map-marker-alt"></i> ${tour.destination}</div>
+                            <div class="tour-price">From <span>PKR ${tour.price}</span></div>
+                        </div>
+                    `;
+                    card.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        const tour = toursData.find(t => t.id === id);
+                        if (tour) openModal(tour);
+                    });
+                    toursGrid.appendChild(card);
+                });
+            }
+
+            // ===== OPEN MODAL =====
+            function openModal(tour) {
+                modalTitle.textContent = tour.title;
+                modalSub.textContent = tour.destination;
+                bookingDate.value = today;
+                peopleCount.value = '1';
+                accommodationType.value = 'Standard';
+                phoneNumber.value = '';
+                phoneNumber.style.borderColor = '#f0d6d0';
+                phoneNumber.style.boxShadow = 'none';
+                phoneError.style.display = 'none';
+                specialRequests.value = '';
+                modal.dataset.tourId = tour.id;
+                modal.dataset.tourPrice = tour.price;
+                modal.dataset.tourTitle = tour.title;
+                modal.dataset.tourDestination = tour.destination;
+                modal.classList.add('active');
+            }
+
+            function closeModal() {
+                modal.classList.remove('active');
+            }
+
+            // ===== EVENT LISTENERS =====
+            searchBtn.addEventListener('click', function() {
+                currentLocation = locationSelect.value;
+                renderTours();
+            });
+
+            locationSelect.addEventListener('change', function() {
+                currentLocation = this.value;
+                renderTours();
+            });
+
+            // Modal buttons with phone validation
+            continueBtn.addEventListener('click', function() {
+                const tourTitle = modal.dataset.tourTitle || 'Tour';
+                const destination = modal.dataset.tourDestination || 'Destination';
+                const date = bookingDate.value || 'No date';
+                const people = peopleCount.value || '1';
+                const accommodation = accommodationType.value || 'Standard';
+                const phone = phoneNumber.value || '';
+                const requests = specialRequests.value || 'None';
+
+                if (!date) {
+                    alert('⚠️ Please select a booking date.');
+                    return;
+                }
+
+                // Validate phone number
+                if (!phone) {
+                    alert('⚠️ Please enter your phone number.');
+                    phoneNumber.focus();
+                    return;
+                }
+
+                const phoneRegex = /^03\d{9}$/;
+                if (!phoneRegex.test(phone)) {
+                    alert('⚠️ Please enter a valid Pakistani phone number (11 digits, starts with 03).');
+                    phoneNumber.style.borderColor = '#dc3545';
+                    phoneNumber.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.12)';
+                    phoneError.style.display = 'block';
+                    phoneNumber.focus();
+                    return;
+                }
+
+                alert(
+                    `✅ Booking Confirmed!\n\n` +
+                    `Tour: ${tourTitle}\n` +
+                    `Destination: ${destination}\n` +
+                    `Booking Date: ${date}\n` +
+                    `People: ${people}\n` +
+                    `Accommodation: ${accommodation}\n` +
+                    `Phone: ${phone}\n` +
+                    `Special Requests: ${requests}\n\n` +
+                    `Thank you for choosing Bookkaru!`
+                );
+                closeModal();
+            });
+
+            cancelBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            // Newsletter
+            document.querySelector('.subscribe-btn').addEventListener('click', function() {
+                const email = document.querySelector('.newsletter-form input').value;
+                if (!email) {
+                    alert('⚠️ Please enter your email address.');
+                    return;
+                }
+                if (!email.includes('@') || !email.includes('.')) {
+                    alert('⚠️ Please enter a valid email address.');
+                    return;
+                }
+                alert('✅ Thank you for subscribing to our newsletter!');
+                document.querySelector('.newsletter-form input').value = '';
+            });
+
+            // ===== INITIALIZE =====
+            renderTours();
+
+        })();
+    </script>
+</body>
+</html>

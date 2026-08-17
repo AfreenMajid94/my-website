@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookkaru · Register Your Business</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f4f2;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        /* ---------- REGISTER CONTAINER - WHITE BACKGROUND ---------- */
+        .register-container {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 0;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            border: 2px solid #e63946;
+            position: relative;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ---------- LEFT SIDE - FORM ---------- */
+        .register-left {
+            flex: 1.2;
+            padding: 2.5rem 2.5rem 2.5rem 2.8rem;
+            min-width: 0;
+        }
+
+        .register-left .back-btn {
+            color: #2c1810;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .register-left .back-btn:hover {
+            color: #e63946;
+            transform: translateX(-4px);
+        }
+
+        .register-left .logo {
+            margin-bottom: 1.5rem;
+        }
+
+        .register-left .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c1810;
+        }
+
+        .register-left .logo h1 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .register-left .logo p {
+            color: #8a6b5c;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        .register-left .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .register-left .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c1810;
+            margin-bottom: 0.3rem;
+        }
+
+        .register-left .form-group label .required {
+            color: #e63946;
+        }
+
+        .register-left .form-group input,
+        .register-left .form-group select,
+        .register-left .form-group textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background: #fcf8f6;
+            color: #2c1810;
+        }
+
+        .register-left .form-group input::placeholder,
+        .register-left .form-group textarea::placeholder {
+            color: #b0a098;
+        }
+
+        .register-left .form-group input:focus,
+        .register-left .form-group select:focus,
+        .register-left .form-group textarea:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
+            background: #ffffff;
+        }
+
+        .register-left .form-group input.error,
+        .register-left .form-group select.error,
+        .register-left .form-group textarea.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.10);
+        }
+
+        .register-left .form-group input.success,
+        .register-left .form-group select.success,
+        .register-left .form-group textarea.success {
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.10);
+        }
+
+        .register-left .form-group .error-msg {
+            color: #dc3545;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .register-left .form-group .error-msg.show {
+            display: block;
+        }
+
+        /* Remove resize handle from textarea */
+        .register-left .form-group textarea {
+            resize: none;
+        }
+
+        .register-left .register-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #e63946;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.3rem;
+        }
+
+        .register-left .register-btn:hover {
+            background: #c62828;
+            transform: scale(1.02);
+        }
+
+        /* ---------- RIGHT SIDE - IMAGE ---------- */
+        .register-right {
+            flex: 1;
+            background-image: url('https://nationalmagazine.ca/MediaGallery/NM/NationalMagazine/Articles/The%20Practice/Young%20Lawyers/10_step_program_YL769x468.jpg?ext=.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100%;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 2rem;
+        }
+
+        .register-right .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+
+        .register-right .quote {
+            position: relative;
+            z-index: 1;
+            color: #ffffff;
+        }
+
+        .register-right .quote h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-right .quote p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 0.3rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ---------- responsive ---------- */
+        @media (max-width: 768px) {
+            .register-container {
+                flex-direction: column;
+                max-width: 550px;
+            }
+            .register-left {
+                padding: 2rem 1.5rem;
+            }
+            .register-right {
+                min-height: 180px;
+                padding: 1.5rem;
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0.8rem;
+            }
+            .register-left {
+                padding: 1.5rem 1.2rem;
+            }
+            .register-left .logo h1 {
+                font-size: 1.4rem;
+            }
+            .register-left .back-btn {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <!-- LEFT SIDE - FORM -->
+        <div class="register-left">
+            <!-- Back Button -->
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+            <!-- Logo -->
+            <div class="logo">
+                <h1><i class="fas fa-store"></i> Register Your Business</h1>
+                <p>Register your business with Bookkaru to get started.</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registerForm" novalidate>
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" placeholder="Enter your full name" maxlength="30" required>
+                    <div class="error-msg" id="fullNameError">⚠️ Please enter a valid full name </div>
+                </div>
+
+                <!-- Email Address -->
+                <div class="form-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" placeholder="Enter your email address" required>
+                    <div class="error-msg" id="emailError">⚠️ Please enter a valid email address</div>
+                </div>
+
+                <!-- Phone Number - with dash after 4 digits -->
+                <div class="form-group">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phone" placeholder="03XX-XXXXXXX" maxlength="12" required>
+                    <div class="error-msg" id="phoneError">⚠️ Please enter a valid 11-digit (03XX-XXXXXXX)</div>
+                </div>
+
+                <!-- City Selection -->
+                <div class="form-group">
+                    <label>Select City <span class="required">*</span></label>
+                    <select id="city">
+                        <option value="">-- Select City --</option>
+                        <option value="Karachi">Karachi</option>
+                        <option value="Lahore">Lahore</option>
+                        <option value="Islamabad">Islamabad</option>
+                        <option value="Rawalpindi">Rawalpindi</option>
+                        <option value="Faisalabad">Faisalabad</option>
+                        <option value="Multan">Multan</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Peshawar">Peshawar</option>
+                        <option value="Quetta">Quetta</option>
+                        <option value="Sialkot">Sialkot</option>
+                        <option value="Gujranwala">Gujranwala</option>
+                        <option value="Bahawalpur">Bahawalpur</option>
+                        <option value="Sargodha">Sargodha</option>
+                        <option value="Sukkur">Sukkur</option>
+                        <option value="Abbottabad">Abbottabad</option>
+                        <option value="Mardan">Mardan</option>
+                    </select>
+                    <div class="error-msg" id="cityError">⚠️ Please select a city</div>
+                </div>
+
+                <!-- Business Category -->
+                <div class="form-group">
+                    <label>Select Business Category <span class="required">*</span></label>
+                    <select id="businessCategory">
+                        <option value="">-- Select Category --</option>
+                        <option value="Bus">Bus</option>
+                        <option value="Car">Car</option>
+                        <option value="Cinema">Cinema</option>
+                        <option value="Event">Event</option>
+                        <option value="Attraction">Attraction</option>
+                        <option value="Tour">Tour</option>
+                        <option value="Flight">Flight</option>
+                    </select>
+                    <div class="error-msg" id="categoryError">⚠️ Please select a business category</div>
+                </div>
+
+                <!-- Business Name -->
+                <div class="form-group">
+                    <label>Business Name <span class="required">*</span></label>
+                    <input type="text" id="businessName" placeholder="Enter your business name" maxlength="50" required>
+                    <div class="error-msg" id="businessNameError">⚠️ Please enter your business name </div>
+                </div>
+
+                <!-- Describe Business - removed resize handle -->
+                <div class="form-group">
+                    <label>Describe Your Business <span class="required">*</span></label>
+                    <textarea id="businessDescription" rows="3" placeholder="Briefly describe your business..." required></textarea>
+                    <div class="error-msg" id="descriptionError">⚠️ Please describe your business (min 10 characters)</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="register-btn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+            </form>
+        </div>
+
+        <!-- RIGHT SIDE - IMAGE -->
+        <div class="register-right">
+            <div class="overlay"></div>
+            <div class="quote">
+                <h3>Grow Your Business</h3>
+                <p>Partner with Bookkaru and reach thousands of customers</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerForm');
+            const fullName = document.getElementById('fullName');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            const city = document.getElementById('city');
+            const businessCategory = document.getElementById('businessCategory');
+            const businessName = document.getElementById('businessName');
+            const businessDescription = document.getElementById('businessDescription');
+
+            const fullNameError = document.getElementById('fullNameError');
+            const emailError = document.getElementById('emailError');
+            const phoneError = document.getElementById('phoneError');
+            const cityError = document.getElementById('cityError');
+            const categoryError = document.getElementById('categoryError');
+            const businessNameError = document.getElementById('businessNameError');
+            const descriptionError = document.getElementById('descriptionError');
+
+            // ============================================
+            // FULL NAME VALIDATION
+            //    - Only alphabets (A-Z, a-z) and spaces
+            //    - No digits, no special characters
+            //    - Minimum 3 characters
+            //    - Maximum 30 characters
+            // ============================================
+            function validateFullName() {
+                const value = fullName.value.trim();
+                const alphabetRegex = /^[A-Za-z\s]+$/;
+                
+                if (value.length < 3 || value.length > 30 || !alphabetRegex.test(value)) {
+                    fullName.classList.add('error');
+                    fullName.classList.remove('success');
+                    fullNameError.classList.add('show');
+                    return false;
+                } else {
+                    fullName.classList.remove('error');
+                    fullName.classList.add('success');
+                    fullNameError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // BUSINESS NAME VALIDATION (UPDATED - 50 chars)
+            //    - Minimum 2 characters
+            //    - Maximum 50 characters
+            //    - Cannot be empty
+            // ============================================
+            function validateBusinessName() {
+                const value = businessName.value.trim();
+                
+                if (value.length < 2 || value.length > 50) {
+                    businessName.classList.add('error');
+                    businessName.classList.remove('success');
+                    businessNameError.classList.add('show');
+                    return false;
+                } else {
+                    businessName.classList.remove('error');
+                    businessName.classList.add('success');
+                    businessNameError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // EMAIL VALIDATION
+            // ============================================
+            function validateEmail() {
+                const value = email.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    email.classList.add('error');
+                    email.classList.remove('success');
+                    emailError.classList.add('show');
+                    return false;
+                } else {
+                    email.classList.remove('error');
+                    email.classList.add('success');
+                    emailError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // PHONE NUMBER VALIDATION
+            // ============================================
+            function formatPhoneNumber() {
+                let value = phone.value.replace(/\D/g, '');
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+                if (value.length >= 4) {
+                    value = value.slice(0, 4) + '-' + value.slice(4);
+                }
+                phone.value = value;
+            }
+
+            function validatePhone() {
+                const value = phone.value.replace(/\D/g, '');
+                const phoneRegex = /^03\d{9}$/;
+                if (!phoneRegex.test(value)) {
+                    phone.classList.add('error');
+                    phone.classList.remove('success');
+                    phoneError.classList.add('show');
+                    return false;
+                } else {
+                    phone.classList.remove('error');
+                    phone.classList.add('success');
+                    phoneError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // CITY VALIDATION
+            // ============================================
+            function validateCity() {
+                const value = city.value;
+                if (value === '') {
+                    city.classList.add('error');
+                    city.classList.remove('success');
+                    cityError.classList.add('show');
+                    return false;
+                } else {
+                    city.classList.remove('error');
+                    city.classList.add('success');
+                    cityError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // CATEGORY VALIDATION
+            // ============================================
+            function validateCategory() {
+                const value = businessCategory.value;
+                if (value === '') {
+                    businessCategory.classList.add('error');
+                    businessCategory.classList.remove('success');
+                    categoryError.classList.add('show');
+                    return false;
+                } else {
+                    businessCategory.classList.remove('error');
+                    businessCategory.classList.add('success');
+                    categoryError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // DESCRIPTION VALIDATION
+            // ============================================
+            function validateDescription() {
+                const value = businessDescription.value.trim();
+                if (value.length < 10) {
+                    businessDescription.classList.add('error');
+                    businessDescription.classList.remove('success');
+                    descriptionError.classList.add('show');
+                    return false;
+                } else {
+                    businessDescription.classList.remove('error');
+                    businessDescription.classList.add('success');
+                    descriptionError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // REAL-TIME VALIDATION (on input)
+            // ============================================
+            fullName.addEventListener('input', validateFullName);
+            email.addEventListener('input', validateEmail);
+            phone.addEventListener('input', function() {
+                formatPhoneNumber();
+                validatePhone();
+            });
+            city.addEventListener('change', validateCity);
+            businessCategory.addEventListener('change', validateCategory);
+            businessName.addEventListener('input', validateBusinessName);
+            businessDescription.addEventListener('input', validateDescription);
+
+            // ============================================
+            // FORM SUBMISSION
+            // ============================================
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const isFullNameValid = validateFullName();
+                const isEmailValid = validateEmail();
+                const isPhoneValid = validatePhone();
+                const isCityValid = validateCity();
+                const isCategoryValid = validateCategory();
+                const isBusinessNameValid = validateBusinessName();
+                const isDescriptionValid = validateDescription();
+
+                if (isFullNameValid && isEmailValid && isPhoneValid && isCityValid && 
+                    isCategoryValid && isBusinessNameValid && isDescriptionValid) {
+                    
+                    const category = businessCategory.value;
+                    const cityName = city.value;
+                    alert(`✅ Thank you! Your business registration request has been submitted successfully.\n\nBusiness: ${businessName.value}\nCategory: ${category}\nCity: ${cityName}\n\nWe will contact you within 24-48 hours.`);
+                    
+                    window.location.href = 'index.html';  // ✅ FIXED - Changed from homepage.html
+                } else {
+                    const firstError = document.querySelector('.form-group input.error, .form-group select.error, .form-group textarea.error');
+                    if (firstError) {
+                        firstError.focus();
+                    }
+                    alert('⚠️ Please fill in all required fields correctly.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

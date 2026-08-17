@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookkaru · Sign In</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f4f2;
+        }
+
+        /* ---------- LEFT SIDE - SIGN IN FORM ---------- */
+        .signin-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 4rem;
+            max-width: 520px;
+            background: #ffffff;
+            min-height: 100vh;
+        }
+
+        .signin-left .back-btn {
+            color: #2c1810;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: 0.2s;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .signin-left .back-btn:hover {
+            color: #e63946;
+            transform: translateX(-4px);
+        }
+
+        .signin-left .logo {
+            margin-bottom: 2rem;
+        }
+
+        .signin-left .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c1810;
+        }
+
+        .signin-left .logo h1 i {
+            color: #e63946;
+            margin-right: 8px;
+        }
+
+        .signin-left .logo p {
+            color: #8a6b5c;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        .signin-left .welcome-text {
+            margin-bottom: 2rem;
+        }
+
+        .signin-left .welcome-text h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c1810;
+        }
+
+        .signin-left .welcome-text p {
+            color: #8a6b5c;
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+
+        .signin-left .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .signin-left .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c1810;
+            margin-bottom: 0.3rem;
+        }
+
+        .signin-left .form-group label .required {
+            color: #e63946;
+        }
+
+        .signin-left .form-group input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #f0d6d0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background: #fcf8f6;
+        }
+
+        .signin-left .form-group input:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.10);
+        }
+
+        .signin-left .form-group input.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.10);
+        }
+
+        .signin-left .form-group input.success {
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.08);
+        }
+
+        .signin-left .form-group .error-msg {
+            color: #dc3545;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .signin-left .form-group .error-msg.show {
+            display: block;
+        }
+
+        .signin-left .password-wrapper {
+            position: relative;
+        }
+
+        .signin-left .password-wrapper .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #8a6b5c;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .signin-left .password-wrapper .toggle-password:hover {
+            color: #2c1810;
+        }
+
+        .signin-left .forgot-password {
+            text-align: right;
+            margin-top: 0.3rem;
+        }
+
+        .signin-left .forgot-password a {
+            color: #8a6b5c;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .signin-left .forgot-password a:hover {
+            color: #e63946;
+        }
+
+        .signin-left .signin-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #e63946;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .signin-left .signin-btn:hover {
+            background: #c62828;
+            transform: scale(1.02);
+        }
+
+        .signin-left .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.2rem 0;
+            color: #8a6b5c;
+            font-size: 0.85rem;
+        }
+
+        .signin-left .divider::before,
+        .signin-left .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #f0d6d0;
+        }
+
+        .signin-left .divider::before {
+            margin-right: 1rem;
+        }
+
+        .signin-left .divider::after {
+            margin-left: 1rem;
+        }
+
+        .signin-left .google-btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: #ffffff;
+            color: #2c1810;
+            border: 2px solid #f0d6d0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+
+        .signin-left .google-btn:hover {
+            background: #fcf8f6;
+            border-color: #e63946;
+            transform: scale(1.02);
+        }
+
+        .signin-left .google-btn i {
+            color: #e63946;
+            font-size: 1.2rem;
+        }
+
+        .signin-left .signup-link {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+            color: #5a3d30;
+        }
+
+        .signin-left .signup-link a {
+            color: #e63946;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signin-left .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* ---------- RIGHT SIDE - IMAGE ---------- */
+        .signin-right {
+            flex: 1.2;
+            background-image: url('https://plus.unsplash.com/premium_photo-1673971700988-346588461fa7?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dHJhdmVsJTIwY2FyfGVufDB8fDB8fHww');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .signin-right .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+        }
+
+        .signin-right .quote {
+            position: absolute;
+            bottom: 3rem;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #ffffff;
+            padding: 0 2rem;
+            z-index: 1;
+        }
+
+        .signin-right .quote h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .signin-right .quote p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 0.3rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ---------- responsive ---------- */
+        @media (max-width: 992px) {
+            .signin-left {
+                padding: 2.5rem 2.5rem;
+                max-width: 100%;
+            }
+            .signin-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .signin-left {
+                padding: 2rem 1.5rem;
+            }
+            .signin-left .logo h1 {
+                font-size: 1.6rem;
+            }
+            .signin-left .welcome-text h2 {
+                font-size: 1.4rem;
+            }
+            .signin-left .back-btn {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LEFT SIDE - SIGN IN FORM -->
+    <div class="signin-left">
+        <!-- Back Button -->
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+        <!-- Logo -->
+        <div class="logo">
+            <h1><i class="fas fa-ticket-alt"></i> Bookkaru</h1>
+        </div>
+
+        <!-- Welcome Text -->
+        <div class="welcome-text">
+            <h2>Sign in to your account</h2>
+        </div>
+
+        <!-- Sign In Form -->
+        <form id="signinForm" novalidate>
+            <!-- Email or Username -->
+            <div class="form-group">
+                <label>Email or Username <span class="required">*</span></label>
+                <input type="text" id="emailOrUsername" placeholder="Enter your email or username" maxlength="30" required>
+                <div class="error-msg" id="emailError">⚠️ Please enter your email or username </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label>Password <span class="required">*</span></label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Enter your password" maxlength="30" required>
+                    <button type="button" class="toggle-password" id="togglePassword"><i class="fas fa-eye"></i></button>
+                </div>
+                <div class="error-msg" id="passwordError">⚠️ Please enter your password </div>
+            </div>
+
+            <!-- Forgot Password -->
+            <div class="forgot-password">
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <!-- Sign In Button -->
+            <button type="submit" class="signin-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">or continue with</div>
+
+        <!-- Google Sign In -->
+        <button class="google-btn" id="googleSignIn">
+            <i class="fab fa-google"></i> Sign in with Google
+        </button>
+
+        <!-- Sign Up Link -->
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign up</a>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE - IMAGE -->
+    <div class="signin-right">
+        <div class="overlay"></div>
+        <div class="quote">
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('signinForm');
+            const emailOrUsername = document.getElementById('emailOrUsername');
+            const password = document.getElementById('password');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+
+            // ============================================
+            // TOGGLE PASSWORD VISIBILITY
+            // ============================================
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (password.type === 'password') {
+                    password.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    password.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+
+            // ============================================
+            // EMAIL OR USERNAME VALIDATION
+            //    - Minimum 3 characters
+            //    - Maximum 30 characters
+            //    - Cannot be empty
+            // ============================================
+            function validateEmailOrUsername() {
+                const value = emailOrUsername.value.trim();
+                
+                if (value.length < 3 || value.length > 30) {
+                    emailOrUsername.classList.add('error');
+                    emailOrUsername.classList.remove('success');
+                    emailError.classList.add('show');
+                    return false;
+                } else {
+                    emailOrUsername.classList.remove('error');
+                    emailOrUsername.classList.add('success');
+                    emailError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // PASSWORD VALIDATION
+            //    - Minimum 6 characters
+            //    - Maximum 30 characters
+            //    - Cannot be empty
+            // ============================================
+            function validatePassword() {
+                const value = password.value.trim();
+                
+                if (value.length < 6 || value.length > 30) {
+                    password.classList.add('error');
+                    password.classList.remove('success');
+                    passwordError.classList.add('show');
+                    return false;
+                } else {
+                    password.classList.remove('error');
+                    password.classList.add('success');
+                    passwordError.classList.remove('show');
+                    return true;
+                }
+            }
+
+            // ============================================
+            // REAL-TIME VALIDATION (on input)
+            // ============================================
+            emailOrUsername.addEventListener('input', validateEmailOrUsername);
+            password.addEventListener('input', validatePassword);
+
+            // ============================================
+            // FORM SUBMISSION - FIXED
+            // ============================================
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const isEmailValid = validateEmailOrUsername();
+                const isPasswordValid = validatePassword();
+
+                if (isEmailValid && isPasswordValid) {
+                    const email = emailOrUsername.value.trim();
+                    const pass = password.value.trim();
+
+                    alert(
+                        `✅ Welcome back! You have been signed in successfully.\n\n` +
+                        `Email/Username: ${email}\n` +
+                        `Password: ${'•'.repeat(pass.length)}\n\n` +
+                        `Redirecting to homepage...`
+                    );
+                    window.location.href = 'index.html';  // ✅ FIXED
+                } else {
+                    const firstError = document.querySelector('.form-group input.error');
+                    if (firstError) {
+                        firstError.focus();
+                    }
+                    alert('⚠️ Please fix all errors before signing in.');
+                }
+            });
+
+            // ============================================
+            // GOOGLE SIGN IN
+            // ============================================
+            document.getElementById('googleSignIn').addEventListener('click', function() {
+                alert('🔐 Google Sign In - Coming soon!');
+            });
+        });
+    </script>
+</body>
+</html>
